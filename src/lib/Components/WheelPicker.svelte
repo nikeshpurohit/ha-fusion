@@ -29,9 +29,15 @@
 	if (minTemp && maxTemp) {
 		for (let i = maxTemp; i >= minTemp; i--) {
 			if (targetTempStep < 1) {
-				temperatures.push(i + targetTempStep);
+				for (let j = 0; j < 1 / targetTempStep; j++) {
+					if (i - j * targetTempStep < minTemp) {
+						break
+					}
+					temperatures.push(i - j * targetTempStep);
+				}
+			} else {
+				temperatures.push(i);
 			}
-			temperatures.push(i);
 		}
 	}
 
