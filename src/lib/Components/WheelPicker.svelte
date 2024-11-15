@@ -25,8 +25,12 @@
 
 	const minTemp = stateObj?.attributes?.min_temp;
 	const maxTemp = stateObj?.attributes?.max_temp;
+	const targetTempStep = stateObj?.attributes?.target_temp_step || 1;
 	if (minTemp && maxTemp) {
 		for (let i = maxTemp; i >= minTemp; i--) {
+			if (targetTempStep < 1) {
+				temperatures.push(i + targetTempStep);
+			}
 			temperatures.push(i);
 		}
 	}
@@ -224,7 +228,7 @@
 
 <style>
 	:root {
-		--width: 7.2rem;
+		--width: 8.9rem;
 		--height: 4.9rem;
 	}
 
