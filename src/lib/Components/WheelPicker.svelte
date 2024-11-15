@@ -30,10 +30,11 @@
 		for (let i = maxTemp; i >= minTemp; i--) {
 			if (targetTempStep < 1) {
 				for (let j = 0; j < 1 / targetTempStep; j++) {
-					if (i - j * targetTempStep < minTemp) {
+					const temperature = i - j * targetTempStep;
+					if (temperature < minTemp) {
 						break
 					}
-					temperatures.push(i - j * targetTempStep);
+					temperatures.push(temperature);
 				}
 			} else {
 				temperatures.push(i);
