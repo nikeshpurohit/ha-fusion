@@ -10,5 +10,5 @@ services:
       - 5051:5051
     environment:
       TZ: Europe/Stockholm
-      HASS_URL: http://localhost:8123
+      HASS_URL: http://meow.local:8123
     restart: always
