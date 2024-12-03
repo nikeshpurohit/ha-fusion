@@ -1,13 +1,14 @@
 services:
   ha-fusion:
     container_name: ha-fusion
-    image: ghcr.io/matt8707/ha-fusion
+    build:
+      context: .
     volumes:
-      - /path/to/ha-fusion:/app/data
+      - /home/imilka/ha-fusion-fork:/app/data
     network_mode: bridge
     ports:
-      - 5050:5050
+      - 5051:5051
     environment:
       TZ: Europe/Stockholm
-      HASS_URL: http://192.168.1.241:8123
+      HASS_URL: http://localhost:8123
     restart: always

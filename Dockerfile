@@ -21,9 +21,9 @@ COPY --from=builder /app/server.js .
 COPY --from=builder /app/package.json .
 
 # set environment
-ENV PORT=5050 \
+ENV PORT=5051 \
   NODE_ENV=production \
   ADDON=false
 
-EXPOSE 5050
+EXPOSE 5051
 CMD ["node", "server.js"]
