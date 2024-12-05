@@ -8,7 +8,7 @@
 	import HorizontalStackHeader from '$lib/Main/HorizontalStackHeader.svelte';
 	import Scenes from '$lib/Main/Scenes.svelte';
 	import { handleVisibility, mediaQueries } from '$lib/Conditional';
-	import { generateId } from '$lib/Utils';
+	import { generateId, getDomain } from '$lib/Utils';
 	import { resizeAction } from '../Actions/ResizeAction';
 
 	export let view: any;
@@ -37,7 +37,6 @@
 	};
 
 	$: resizeOptions = {
-		editMode: $editMode,
 		resizeOverlay
 	};
 
@@ -206,6 +205,19 @@
     `;
 	}
 
+	function itemIsResizable(item: any) {
+		const resizableDomains = ['climate'];
+
+		const entity = $states?.[item?.entity_id];
+		const domain = getDomain(entity?.entity_id);
+
+		if (!domain) {
+			return false;
+		}
+
+		return resizableDomains.includes(domain);
+	}
+
 	/**
 	 * dnd transformDraggedElement
 	 */
@@ -353,6 +365,12 @@
 										data-is-dnd-shadow-item-hint={item?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 										class="item"
 										animate:flip={{ duration: $motion }}
+										use:resizeAction={{
+											...resizeOptions,
+											resizable: $editMode && itemIsResizable(item)
+										}}
+										on:resizeStart={handleResizeStart}
+										on:resizeEnd={handleResizeEnd}
 										tabindex="-1"
 										style={itemStyles(item?.type)}
 									>
@@ -420,7 +438,8 @@
 							class="item"
 							animate:flip={{ duration: $motion }}
 							use:resizeAction={{
-								...resizeOptions
+								...resizeOptions,
+								resizable: $editMode && itemIsResizable(item)
 							}}
 							on:resizeStart={handleResizeStart}
 							on:resizeEnd={handleResizeEnd}

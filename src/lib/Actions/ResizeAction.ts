@@ -6,7 +6,7 @@ const RESIZE_BOUNDARY_THRESHOLD = 10;
 import type { ActionReturn } from 'svelte/action';
 
 export interface ResizeOptions {
-	editMode: boolean;
+	resizable: boolean;
 	resizeOverlay: HTMLElement | null;
 }
 
@@ -55,7 +55,7 @@ export function resizeAction(
 	}
 
 	function handleGlobalMouseMove(event: MouseEvent) {
-		if (!currentOptions.editMode) return;
+		if (!currentOptions.resizable) return;
 
 		requestAnimationFrame(() => {
 			if (!resizeTarget) {
@@ -81,7 +81,7 @@ export function resizeAction(
 	}
 
 	function handleNodeMouseMove(event: MouseEvent) {
-		if (!currentOptions.editMode) return;
+		if (!currentOptions.resizable) return;
 
 		const target = event.target as HTMLElement;
 
@@ -92,7 +92,7 @@ export function resizeAction(
 	}
 
 	function handleMouseDown(event: MouseEvent) {
-		if (!currentOptions.editMode) return;
+		if (!currentOptions.resizable) return;
 		event.stopPropagation();
 
 		const rect = node.getBoundingClientRect();
@@ -146,7 +146,7 @@ export function resizeAction(
 
 	return {
 		update(newOptions: {
-			editMode: boolean;
+			resizable: boolean;
 			resizeOverlay: HTMLElement | null;
 		}) {
 			currentOptions = newOptions;
