@@ -91,6 +91,11 @@ export function resizeAction(
 		target.style.cursor = isRightEdge ? 'ew-resize' : '';
 	}
 
+	function captureNodeClick(event: MouseEvent) {
+		event.stopPropagation();
+		node.removeEventListener('click', captureNodeClick, true);
+	}
+
 	function handleMouseDown(event: MouseEvent) {
 		if (!currentOptions.resizable) return;
 		event.stopPropagation();
@@ -116,6 +121,7 @@ export function resizeAction(
 			setResizeTarget(null);
 
 			window.removeEventListener('mousemove', handleGlobalMouseMove);
+			node.addEventListener('click', captureNodeClick, true);
 			document.body.style.cursor = 'default';
 
 			dispatchEvent(RESIZE_END_EVENT_NAME, { target: node });
