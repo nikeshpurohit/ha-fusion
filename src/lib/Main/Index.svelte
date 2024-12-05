@@ -513,7 +513,7 @@
 	.resize-border {
 		display: none;
 		position: absolute;
-		border: 2px solid yellow;
+		border: 2px solid #ffc008;
 		pointer-events: none;
 		z-index: 1000;
 		border-radius: 0.65rem;
