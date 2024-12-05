@@ -9,6 +9,7 @@
 	import Scenes from '$lib/Main/Scenes.svelte';
 	import { handleVisibility, mediaQueries } from '$lib/Conditional';
 	import { generateId } from '$lib/Utils';
+	import { resizeAction } from '../Actions/ResizeAction';
 
 	export let view: any;
 	export let altKeyPressed: boolean;
@@ -22,15 +23,31 @@
 
 	const stackHeight = $itemHeight * 1.65;
 
+	let resizeOverlay: HTMLElement | null;
+	let isResizing = false;
+
 	let mounted = false;
 	onMount(() => (mounted = true));
 
 	$: dndOptions = {
 		flipDurationMs: $motion,
-		dragDisabled: !$editMode,
+		dragDisabled: !$editMode || isResizing,
 		dropTargetStyle: {},
 		zoneTabIndex: -1
 	};
+
+	$: resizeOptions = {
+		editMode: $editMode,
+		resizeOverlay
+	};
+
+	function handleResizeStart() {
+		isResizing = true;
+	}
+
+	function handleResizeEnd() {
+		isResizing = false;
+	}
 
 	/**
 	 * Drag and drop common code.
@@ -402,16 +419,24 @@
 							data-is-dnd-shadow-item-hint={item?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							class="item"
 							animate:flip={{ duration: $motion }}
+							use:resizeAction={{
+								...resizeOptions
+							}}
+							on:resizeStart={handleResizeStart}
+							on:resizeEnd={handleResizeEnd}
 							tabindex="-1"
 							style={itemStyles(item?.type)}
 						>
-							<Content {item} sectionName={section?.name} />
+							<div style={"grid-column: span 1"}>
+								<Content {item} sectionName={section?.name} />
+							</div>
 						</div>
 					{/each}
 				</div>
 			{/if}
 		</section>
 	{/each}
+	<div bind:this={resizeOverlay} class="resize-border"></div>
 </main>
 
 <style>
@@ -450,6 +475,8 @@
 	}
 
 	.item {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 14.5rem);
 		position: relative;
 		border-radius: 0.65rem;
 	}
@@ -481,5 +508,14 @@
 
 	.scenes > .divider {
 		border-right: 1px solid transparent;
+	}
+
+	.resize-border {
+		display: none;
+		position: absolute;
+		border: 2px solid yellow;
+		pointer-events: none;
+		z-index: 1000;
+		border-radius: 0.65rem;
 	}
 </style>

@@ -1,0 +1,187 @@
+const RESIZE_START_EVENT_NAME = "resizeStart";
+const RESIZE_END_EVENT_NAME = "resizeEnd";
+
+const RESIZE_BOUNDARY_THRESHOLD = 10;
+
+import type { ActionReturn } from 'svelte/action';
+
+export interface ResizeOptions {
+	editMode: boolean;
+	resizeOverlay: HTMLElement | null;
+}
+
+export interface ResizeAttributes {
+	"on:resizeStart"?: (event: CustomEvent<{ target: HTMLElement }>) => void;
+	"on:resizeEnd"?: (event: CustomEvent<{ target: HTMLElement }>) => void;
+}
+
+export function resizeAction(
+	node: HTMLElement,
+	options: ResizeOptions
+): ActionReturn<ResizeOptions, ResizeAttributes> {
+	let initialMouseX = 0;
+	let initialWidth = 0;
+	let columnWidth = calculateColumnWidth();
+
+	let resizeTarget: HTMLElement | null = null;
+	let contentWrapper: HTMLElement | null = null;
+
+	let currentOptions = options;
+
+	function calculateColumnWidth(): number {
+		// Find the closest grid container (assumes the parent is the grid container)
+		const gridContainer = node.parentElement;
+		if (gridContainer) {
+			const gridStyle = getComputedStyle(gridContainer);
+			const columns = gridStyle.gridTemplateColumns.split(' '); // Get column definitions
+			if (columns.length > 0) {
+				return parseFloat(columns[0]); // Return the width of the first column
+			}
+		}
+		// Default column width if no grid is found
+		return 150;
+	}
+
+	function setResizeTarget(target: HTMLElement | null) {
+		if (!target) {
+			resizeTarget = null;
+			contentWrapper = null;
+			return;
+		}
+
+		resizeTarget = target;
+		contentWrapper = target.querySelector('div[style*="grid-column"]') as HTMLElement;
+	}
+
+	function dispatchEvent(name: string, detail: any) {
+		node.dispatchEvent(new CustomEvent(name, { detail }));
+	}
+
+	function handleGlobalMouseMove(event: MouseEvent) {
+		if (!currentOptions.editMode) return;
+
+		requestAnimationFrame(() => {
+			if (!resizeTarget) {
+				return;
+			}
+
+			const rect = resizeTarget.getBoundingClientRect();
+			const deltaX = event.clientX - initialMouseX;
+			const borderWidth = Math.max(initialWidth + deltaX, columnWidth); // Minimum virtual width
+
+			// Current resizing logic for `resizeTarget`
+			const resizeGridSpan = Math.max(1, Math.ceil((event.clientX - rect.left) / columnWidth)); // At least 1 column
+			const currentResizeSpan =
+				parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10) || 1;
+
+			if (resizeGridSpan !== currentResizeSpan) {
+				resizeTarget.style.gridColumn = `span ${resizeGridSpan}`;
+			}
+
+			// Logic for updating wrapper (different from resizeTarget)
+			if (contentWrapper) {
+				const wrapperRect = contentWrapper.getBoundingClientRect();
+				const cursorRelativeX = event.clientX - wrapperRect.left;
+
+				// Determine if the cursor is more than halfway into the next column
+				const wrapperGridSpan = Math.max(
+					1,
+					Math.floor((cursorRelativeX + columnWidth / 2) / columnWidth)
+				); // Adjust with the halfway threshold
+
+				// Only update if the span changes
+				const currentWrapperSpan = parseInt(contentWrapper.style.gridColumn.replace('span ', ''), 10) || 1;
+				if (wrapperGridSpan !== currentWrapperSpan) {
+					contentWrapper.style.gridColumn = `span ${wrapperGridSpan}`;
+				}
+			}
+
+			// Optionally update the overlay dynamically for visual feedback
+			updateResizeOverlay(borderWidth, rect);
+		});
+	}
+
+	function handleNodeMouseMove(event: MouseEvent) {
+		if (!currentOptions.editMode) return;
+
+		const target = event.target as HTMLElement;
+
+		const rect = node.getBoundingClientRect();
+		const isRightEdge = event.clientX > rect.right - RESIZE_BOUNDARY_THRESHOLD && event.clientX < rect.right;
+
+		target.style.cursor = isRightEdge ? 'ew-resize' : '';
+	}
+
+	function handleMouseDown(event: MouseEvent) {
+		if (!currentOptions.editMode) return;
+		event.stopPropagation();
+
+		const rect = node.getBoundingClientRect();
+		if (event.clientX >= rect.right - RESIZE_BOUNDARY_THRESHOLD) {
+			calculateColumnWidth(); // Ensure the column width is up-to-date
+			initialMouseX = event.clientX;
+			initialWidth = rect.width;
+			setResizeTarget(node);
+
+			window.addEventListener('mousemove', handleGlobalMouseMove);
+			document.body.style.cursor = 'ew-resize';
+
+			dispatchEvent(RESIZE_START_EVENT_NAME, { target: node });
+
+			updateResizeOverlay(initialWidth, rect);
+		}
+	}
+
+	function handlePointerUp() {
+		if (resizeTarget !== null) {
+			if (contentWrapper) {
+				const wrapperGridSpan = parseInt(contentWrapper.style.gridColumn.replace('span ', ''), 10) || 1;
+				resizeTarget.style.gridColumn = `span ${wrapperGridSpan}`;
+			}
+
+			setResizeTarget(null);
+
+			window.removeEventListener('mousemove', handleGlobalMouseMove);
+			document.body.style.cursor = 'default';
+
+			dispatchEvent(RESIZE_END_EVENT_NAME, { target: node });
+
+			const { resizeOverlay } = currentOptions;
+
+			if (resizeOverlay !== null) {
+				resizeOverlay.style.display = 'none';
+			}
+		}
+	}
+
+	function updateResizeOverlay(width: number, rect: DOMRect) {
+		const { resizeOverlay } = currentOptions;
+
+		if (resizeOverlay) {
+			resizeOverlay.style.display = 'block';
+			resizeOverlay.style.left = `${rect.left}px`;
+			resizeOverlay.style.top = `${rect.top}px`;
+			resizeOverlay.style.width = `${width}px`;
+			resizeOverlay.style.height = `${rect.height}px`;
+		}
+	}
+
+	node.addEventListener('mousemove', handleNodeMouseMove);
+	node.addEventListener('mousedown', handleMouseDown);
+	window.addEventListener('mouseup', handlePointerUp);
+
+	return {
+		update(newOptions: {
+			editMode: boolean;
+			resizeOverlay: HTMLElement | null;
+		}) {
+			currentOptions = newOptions;
+			columnWidth = calculateColumnWidth();
+		},
+		destroy() {
+			node.removeEventListener('mousemove', handleNodeMouseMove);
+			node.removeEventListener('mousedown', handleMouseDown);
+			window.removeEventListener('mouseup', handlePointerUp);
+		}
+	};
+}
