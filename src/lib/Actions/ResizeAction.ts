@@ -24,7 +24,6 @@ export function resizeAction(
 	let columnWidth = calculateColumnWidth();
 
 	let resizeTarget: HTMLElement | null = null;
-	let contentWrapper: HTMLElement | null = null;
 
 	let currentOptions = options;
 
@@ -45,12 +44,10 @@ export function resizeAction(
 	function setResizeTarget(target: HTMLElement | null) {
 		if (!target) {
 			resizeTarget = null;
-			contentWrapper = null;
 			return;
 		}
 
 		resizeTarget = target;
-		contentWrapper = target.querySelector('div[style*="grid-column"]') as HTMLElement;
 	}
 
 	function dispatchEvent(name: string, detail: any) {
@@ -76,24 +73,6 @@ export function resizeAction(
 
 			if (resizeGridSpan !== currentResizeSpan) {
 				resizeTarget.style.gridColumn = `span ${resizeGridSpan}`;
-			}
-
-			// Logic for updating wrapper (different from resizeTarget)
-			if (contentWrapper) {
-				const wrapperRect = contentWrapper.getBoundingClientRect();
-				const cursorRelativeX = event.clientX - wrapperRect.left;
-
-				// Determine if the cursor is more than halfway into the next column
-				const wrapperGridSpan = Math.max(
-					1,
-					Math.floor((cursorRelativeX + columnWidth / 2) / columnWidth)
-				); // Adjust with the halfway threshold
-
-				// Only update if the span changes
-				const currentWrapperSpan = parseInt(contentWrapper.style.gridColumn.replace('span ', ''), 10) || 1;
-				if (wrapperGridSpan !== currentWrapperSpan) {
-					contentWrapper.style.gridColumn = `span ${wrapperGridSpan}`;
-				}
 			}
 
 			// Optionally update the overlay dynamically for visual feedback
@@ -134,11 +113,6 @@ export function resizeAction(
 
 	function handlePointerUp() {
 		if (resizeTarget !== null) {
-			if (contentWrapper) {
-				const wrapperGridSpan = parseInt(contentWrapper.style.gridColumn.replace('span ', ''), 10) || 1;
-				resizeTarget.style.gridColumn = `span ${wrapperGridSpan}`;
-			}
-
 			setResizeTarget(null);
 
 			window.removeEventListener('mousemove', handleGlobalMouseMove);

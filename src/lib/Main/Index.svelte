@@ -427,9 +427,7 @@
 							tabindex="-1"
 							style={itemStyles(item?.type)}
 						>
-							<div style={"grid-column: span 1"}>
-								<Content {item} sectionName={section?.name} />
-							</div>
+							<Content {item} sectionName={section?.name} />
 						</div>
 					{/each}
 				</div>
@@ -475,8 +473,6 @@
 	}
 
 	.item {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, 14.5rem);
 		position: relative;
 		border-radius: 0.65rem;
 	}
