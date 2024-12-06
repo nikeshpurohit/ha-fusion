@@ -140,10 +140,13 @@ export function resizeAction(
 		}
 	}
 
-	function handlePointerUp() {
+	function handlePointerUp(event: MouseEvent) {
 		if (resizeTarget !== null) {
 			window.removeEventListener('mousemove', handleGlobalMouseMove);
 			node.addEventListener('click', captureNodeClick, true);
+
+			const eventTarget = event.target as HTMLElement;
+			eventTarget.style.cursor = 'default';
 			document.body.style.cursor = 'default';
 
 			dispatchEvent(RESIZE_END_EVENT_NAME, {
