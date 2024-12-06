@@ -8,6 +8,8 @@ import type { ActionReturn } from 'svelte/action';
 export interface ResizeOptions {
 	resizable: boolean;
 	resizeOverlay: HTMLElement | null;
+
+	maxColSpan?: number;
 }
 
 export interface ResizeEvent {
@@ -27,6 +29,7 @@ export function resizeAction(
 	let initialMouseX = 0;
 	let initialWidth = 0;
 	let columnWidth = calculateColumnWidth();
+	let columnGap = calculateColumnGap();
 
 	let resizeTarget: HTMLElement | null = null;
 
@@ -44,6 +47,20 @@ export function resizeAction(
 		}
 		// Default column width if no grid is found
 		return 150;
+	}
+
+	function calculateColumnGap(): number {
+		// Find the closest grid container (assumes the parent is the grid container)
+		const gridContainer = node.parentElement;
+		if (gridContainer) {
+			const gridStyle = getComputedStyle(gridContainer);
+			const columnGap = gridStyle.columnGap;
+			if (columnGap) {
+				return parseFloat(columnGap);
+			}
+		}
+		// Default column gap if no grid is found
+		return 0;
 	}
 
 	function setResizeTarget(target: HTMLElement | null) {
@@ -71,7 +88,10 @@ export function resizeAction(
 			const deltaX = event.clientX - initialMouseX;
 			const borderWidth = Math.max(initialWidth + deltaX, columnWidth); // Minimum virtual width
 
-			const resizeGridSpan = Math.max(1, Math.ceil((event.clientX - rect.left) / columnWidth)); // At least 1 column
+			const resizeGridSpan = Math.min(
+				Math.max(1, Math.ceil((event.clientX - rect.left) / columnWidth)), // At least 1 column
+				currentOptions.maxColSpan || Infinity // Enforce maxColSpan if provided
+			);
 			const currentResizeSpan =
 				parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10) || 1;
 
@@ -126,7 +146,13 @@ export function resizeAction(
 			node.addEventListener('click', captureNodeClick, true);
 			document.body.style.cursor = 'default';
 
-			dispatchEvent(RESIZE_END_EVENT_NAME, { target: node, newColSpan: parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10) });
+			dispatchEvent(RESIZE_END_EVENT_NAME, {
+				target: node,
+				newColSpan: Math.min(
+					parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10),
+					currentOptions.maxColSpan || Infinity
+				)
+			});
 
 			const { resizeOverlay } = currentOptions;
 
@@ -139,13 +165,21 @@ export function resizeAction(
 	}
 
 	function updateResizeOverlay(width: number, rect: DOMRect) {
-		const { resizeOverlay } = currentOptions;
+		const { resizeOverlay, maxColSpan } = currentOptions;
 
 		if (resizeOverlay) {
+			// Calculate the maximum allowed width based on maxColSpan
+			const maxWidth = maxColSpan
+				? maxColSpan * columnWidth + (maxColSpan - 1) * columnGap
+				: Infinity;
+
+			// Clamp the width to respect maxColSpan
+			const clampedWidth = Math.min(width, maxWidth);
+
 			resizeOverlay.style.display = 'block';
 			resizeOverlay.style.left = `${rect.left}px`;
 			resizeOverlay.style.top = `${rect.top}px`;
-			resizeOverlay.style.width = `${width}px`;
+			resizeOverlay.style.width = `${clampedWidth}px`;
 			resizeOverlay.style.height = `${rect.height}px`;
 		}
 	}
@@ -161,6 +195,7 @@ export function resizeAction(
 		}) {
 			currentOptions = newOptions;
 			columnWidth = calculateColumnWidth();
+			columnGap = calculateColumnGap();
 		},
 		destroy() {
 			node.removeEventListener('mousemove', handleNodeMouseMove);

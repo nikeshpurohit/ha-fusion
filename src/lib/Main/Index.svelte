@@ -12,6 +12,14 @@
 	import { resizeAction, type ResizeEvent } from '../Actions/ResizeAction';
 	import type { ButtonItem } from '$lib/Types';
 
+	interface ResizableTypeConfig {
+		maxColSpan: number;
+	}
+
+	const RESIZABLE_CONFIG: Record<string, ResizableTypeConfig> = {
+		climate: { maxColSpan: 2 },
+	};
+
 	export let view: any;
 	export let altKeyPressed: boolean;
 
@@ -220,17 +228,15 @@
     `;
 	}
 
-	function itemIsResizable(item: any) {
-		const resizableDomains = ['climate'];
-
+	function itemResizableConfig(item: any): ResizableTypeConfig | undefined {
 		const entity = $states?.[item?.entity_id];
 		const domain = getDomain(entity?.entity_id);
 
 		if (!domain) {
-			return false;
+			return undefined;
 		}
 
-		return resizableDomains.includes(domain);
+		return RESIZABLE_CONFIG[domain];
 	}
 
 	/**
@@ -382,7 +388,8 @@
 										animate:flip={{ duration: $motion }}
 										use:resizeAction={{
 											...resizeOptions,
-											resizable: $editMode && itemIsResizable(item)
+											resizable: $editMode && !!itemResizableConfig(item),
+											maxColSpan: itemResizableConfig(item)?.maxColSpan
 										}}
 										on:resizeStart={handleResizeStart}
 										on:resizeEnd={(event) => handleResizeEnd(item, event)}
@@ -454,7 +461,8 @@
 							animate:flip={{ duration: $motion }}
 							use:resizeAction={{
 								...resizeOptions,
-								resizable: $editMode && itemIsResizable(item)
+								resizable: $editMode && !!itemResizableConfig(item),
+								maxColSpan: itemResizableConfig(item)?.maxColSpan
 							}}
 							on:resizeStart={handleResizeStart}
 							on:resizeEnd={(event) => handleResizeEnd(item, event)}
