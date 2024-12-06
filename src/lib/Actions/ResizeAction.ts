@@ -10,9 +10,14 @@ export interface ResizeOptions {
 	resizeOverlay: HTMLElement | null;
 }
 
+export interface ResizeEvent {
+	target: HTMLElement;
+	newColSpan?: number;
+}
+
 export interface ResizeAttributes {
-	"on:resizeStart"?: (event: CustomEvent<{ target: HTMLElement }>) => void;
-	"on:resizeEnd"?: (event: CustomEvent<{ target: HTMLElement }>) => void;
+	"on:resizeStart"?: (event: CustomEvent<ResizeEvent>) => void;
+	"on:resizeEnd"?: (event: CustomEvent<ResizeEvent>) => void;
 }
 
 export function resizeAction(
@@ -66,7 +71,6 @@ export function resizeAction(
 			const deltaX = event.clientX - initialMouseX;
 			const borderWidth = Math.max(initialWidth + deltaX, columnWidth); // Minimum virtual width
 
-			// Current resizing logic for `resizeTarget`
 			const resizeGridSpan = Math.max(1, Math.ceil((event.clientX - rect.left) / columnWidth)); // At least 1 column
 			const currentResizeSpan =
 				parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10) || 1;
@@ -118,19 +122,19 @@ export function resizeAction(
 
 	function handlePointerUp() {
 		if (resizeTarget !== null) {
-			setResizeTarget(null);
-
 			window.removeEventListener('mousemove', handleGlobalMouseMove);
 			node.addEventListener('click', captureNodeClick, true);
 			document.body.style.cursor = 'default';
 
-			dispatchEvent(RESIZE_END_EVENT_NAME, { target: node });
+			dispatchEvent(RESIZE_END_EVENT_NAME, { target: node, newColSpan: parseInt(resizeTarget.style.gridColumn.replace('span ', ''), 10) });
 
 			const { resizeOverlay } = currentOptions;
 
 			if (resizeOverlay !== null) {
 				resizeOverlay.style.display = 'none';
 			}
+
+			setResizeTarget(null);
 		}
 	}
 

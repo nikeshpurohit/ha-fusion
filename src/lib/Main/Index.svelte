@@ -9,7 +9,8 @@
 	import Scenes from '$lib/Main/Scenes.svelte';
 	import { handleVisibility, mediaQueries } from '$lib/Conditional';
 	import { generateId, getDomain } from '$lib/Utils';
-	import { resizeAction } from '../Actions/ResizeAction';
+	import { resizeAction, type ResizeEvent } from '../Actions/ResizeAction';
+	import type { ButtonItem } from '$lib/Types';
 
 	export let view: any;
 	export let altKeyPressed: boolean;
@@ -44,8 +45,14 @@
 		isResizing = true;
 	}
 
-	function handleResizeEnd() {
+	function handleResizeEnd(item: ButtonItem, resizeEvent: CustomEvent<ResizeEvent>) {
 		isResizing = false;
+
+		const { newColSpan } = resizeEvent.detail;
+		item.col_span = newColSpan;
+		view.sections = [...view.sections];
+
+		$record();
 	}
 
 	/**
@@ -196,7 +203,15 @@
     `;
 	}
 
-	function itemStyles(type: string) {
+	function itemStyles(type: string, colSpan?: number) {
+		if (colSpan) {
+			return `
+				grid-column: span ${colSpan};
+				grid-row: span 1;
+				display: ${type ? '' : 'none'};
+			`;
+		}
+
 		const large = ['conditional_media', 'picture_elements', 'camera'];
 		return `
 			grid-column: ${large.includes(type) ? 'span 2' : 'span 1'};
@@ -370,9 +385,9 @@
 											resizable: $editMode && itemIsResizable(item)
 										}}
 										on:resizeStart={handleResizeStart}
-										on:resizeEnd={handleResizeEnd}
+										on:resizeEnd={(event) => handleResizeEnd(item, event)}
 										tabindex="-1"
-										style={itemStyles(item?.type)}
+										style={itemStyles(item?.type, item?.col_span)}
 									>
 										<Content {item} sectionName={stackSection?.name} />
 									</div>
@@ -442,9 +457,9 @@
 								resizable: $editMode && itemIsResizable(item)
 							}}
 							on:resizeStart={handleResizeStart}
-							on:resizeEnd={handleResizeEnd}
+							on:resizeEnd={(event) => handleResizeEnd(item, event)}
 							tabindex="-1"
-							style={itemStyles(item?.type)}
+							style={itemStyles(item?.type, item?.col_span)}
 						>
 							<Content {item} sectionName={section?.name} />
 						</div>
