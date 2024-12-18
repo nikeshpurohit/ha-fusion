@@ -69,21 +69,21 @@
 			icon: 'mdi:lock',
 			label: $lang('alarm_modes_armed_away')
 		},
-		{
-			id: 'alarm_arm_night',
-			icon: 'mdi:moon-waning-crescent',
-			label: $lang('alarm_modes_armed_night')
-		},
-		{
-			id: 'alarm_arm_vacation',
-			icon: 'mdi:airplane',
-			label: $lang('alarm_modes_armed_vacation')
-		},
-		{
-			id: 'alarm_arm_custom_bypass',
-			icon: 'mdi:shield',
-			label: $lang('alarm_modes_armed_custom_bypass')
-		},
+		// {
+		// 	id: 'alarm_arm_night',
+		// 	icon: 'mdi:moon-waning-crescent',
+		// 	label: $lang('alarm_modes_armed_night')
+		// },
+		// {
+		// 	id: 'alarm_arm_vacation',
+		// 	icon: 'mdi:airplane',
+		// 	label: $lang('alarm_modes_armed_vacation')
+		// },
+		// {
+		// 	id: 'alarm_arm_custom_bypass',
+		// 	icon: 'mdi:shield',
+		// 	label: $lang('alarm_modes_armed_custom_bypass')
+		// },
 		{
 			id: 'alarm_disarm',
 			icon: 'mdi:shield-off',
