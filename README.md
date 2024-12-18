@@ -14,6 +14,14 @@ If you find this project useful, be sure to 🌟 this repository! If you love it
 
 The current state of this project is **pre-beta**. This means that there's basic functionality missing, incomplete features and unresolved issues. General feedback, bug reports and feature requests are welcome!
 
+Development wishlist:
+   - Get Available alarm control panel modes from hass and display in alarm control panel modal
+   - Add selection of arm modes to alarm control panel modal
+   - Reduce the size of colour picker on smaller veiwports to avoid scrolling
+   - Media player card
+   - Graph card in main area
+
+
 ---
 
 ## Installation
