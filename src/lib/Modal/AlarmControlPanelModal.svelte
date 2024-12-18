@@ -103,7 +103,8 @@
 		
 
 		{#if state === 'disarmed'}
-			<h2>{$lang('alarm_modes_label')}</h2>
+			<h2></h2>
+			<!-- <h2>{$lang('alarm_modes_label')}</h2> -->
 
 			<Select
 				{options}
