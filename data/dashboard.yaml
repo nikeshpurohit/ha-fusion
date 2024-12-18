@@ -1,298 +1,291 @@
-theme: godis
-hide_views: false
-hide_sidebar: false
-sidebarWidth: 391
 views:
-  - name: Hemma
-    id: 6467602449648
+  - name: Overview
+    id: 4486178420562
     sections:
       - type: horizontal-stack
-        id: 5078078976670
         sections:
-          - name: Test
-            id: 2171067078835
+          - name: Home
             items:
-              - type: button
-                entity_id: light.studio_dator
-                id: 5008685947164
-              - type: button
-                entity_id: light.vardagsrum
-                id: 6094154428386
-                name: Belysning
-              - type: button
-                entity_id: light.vardagsrum_horna
-                color: '#1cd760'
-                marquee: true
-                id: 4795962599238
-                name: Hörnlampa
-              - type: button
-                entity_id: media_player.sony_bravia_tv
-                id: 7351468287678
-              - type: button
-                id: 3728122340522
-                entity_id: switch.deltaco_sh_p01_socket
-          - name: Studio
-            id: 9828119797472
+              - id: 3132434601822
+                type: button
+                entity_id: lock.aqara_smart_lock_u200_lock
+                name: Front Door
+              - id: 5848386116187
+                type: button
+                entity_id: alarm_control_panel.security_alarm
+                name: Security Alarm
+                icon: ''
+            id: 8164301786571
+          - name: Actions
             items:
-              - type: button
-                entity_id: light.studio_group
-                id: 3316142550855
-              - type: button
-                entity_id: switch.imac
-                id: 3575493192177
-              - type: button
-                entity_id: switch.gosund_monitors_switch
-                id: 8082348418851
-                icon: material-symbols:speaker
+              - id: 7489782825930
+                type: button
+                entity_id: script.turn_off_upstairs
+                state: ' '
+                name: 'Turn off: Upstairs'
+                icon: mdi:stairs-up
+                more_info: false
+              - id: 799866558079
+                type: button
+                entity_id: script.turn_off_downstairs
+                name: 'Turn off: Downstairs'
+                state: ' '
+                icon: mdi:stairs-down
+                more_info: false
+              - id: 8576448486596
+                type: button
+                entity_id: script.turn_off_everything
+                name: 'Turn off: Everything'
+                icon: mdi:home-off
+                state: ' '
+                more_info: false
+            id: 4104376101872
+        id: 96089944224
       - type: horizontal-stack
-        id: 4240433563768
-        sections:
-          - name: Media
-            id: 7859955675791
-            items:
-              - type: media
-                id: 5276106620601
-                conditional:
-                  - entity_id: sensor.plex_recently_added
-                    name: Senast tillagt
-                    icon: mdi:plex
-                    color: orange
-                  - entity_id: media_player.vardagsrum
-                  - entity_id: media_player.sovrum
-                  - entity_id: media_player.spotify
-                    icon: mdi:spotify
-                  - entity_id: media_player.kok
-          - name: Övrigt
-            items:
-              - type: button
-                id: 4326750373921
-                entity_id: light.badrum_group
-              - type: button
-                id: 6654837792944
-                entity_id: switch.gosund_fan_switch
-                icon: mdi:fan
-              - type: button
-                id: 9182560073626
-                entity_id: light.garderob_lampa
-                name: Garderob
-                icon: material-symbols:door-front-sharp
-              - type: button
-                id: 6583508288448
-                entity_id: light.hall_group
-                name: Hall
-              - type: button
-                entity_id: light.sovrum_group
-                id: 4536918822520
-              - type: button
-                entity_id: climate.ac
-                marquee: true
-                id: 2763550457343
-                name: Klimat
-              - type: button
-                entity_id: switch.ps5_635_power
-                color: '#1cd760'
-                marquee: true
-                id: 8427787269294
-                name: Playstation
-              - type: button
-                entity_id: media_player.samsung
-                id: 1503994513807
-            id: 7274165372538
-      - name: Hemma
-        items:
-          - type: button
-            id: 5560216674913
-            entity_id: person.matte
-            icon: fluent-emoji-flat:alien
-          - type: button
-            id: 8128083996424
-            entity_id: person.sanja
-          - type: button
-            id: 3574383219011
-            entity_id: script.home_leave
-            icon: fluent:hand-wave-20-filled
-          - type: button
-            id: 3827902926530
-            entity_id: script.home_arrive
-            icon: material-symbols:home-rounded
-        id: 1412018494330
-  - name: Entities
-    icon: material-symbols:filter-list-rounded
-    id: 5813909951190
+        sections: []
+        id: 3503734924046
+  - name: Lights
+    id: 4151761450663
     sections:
-      - name: Test
+      - name: ''
         items:
-          - type: button
-            id: 3188058166584
-            entity_id: timer.test
-            name: Timer
-          - type: button
-            id: 4014538054364
-            entity_id: update.hacs_update
-            name: Update
-          - type: button
-            id: 1542804203536
-            entity_id: vacuum.morty
-            name: Vacuum
-          - type: button
-            id: 6145994572695
-            entity_id: weather.smhi_home
-            name: Weather
-          - type: button
-            id: 1443718504784
-            entity_id: zone.home
-            name: Zone
-          - type: button
-            id: 8859082285036
-            entity_id: sun.sun
-          - type: button
-            id: 3600633343715
-            entity_id: switch.galaxy_tab_a_screensaver
-            name: Switch
-          - type: button
-            id: 8233675559365
-            entity_id: sensor.badrum_motion_battery
-            name: Sensor
-          - type: button
-            id: 7404639096964
-            entity_id: select.conditional_media
-            name: Select
-          - type: button
-            id: 8625756439435
-            entity_id: script.home_arrive
-            name: Script
-          - type: button
-            id: 5713628080695
-            entity_id: scene.home_below_horizon
-            name: Scene
-          - type: button
-            id: 4572210401136
-            entity_id: remote.vardagsrum
-            name: Remote
-          - type: button
-            id: 4275494337776
-            entity_id: person.matte
-            name: Person
-          - type: button
-            id: 6609447826960
-            entity_id: number.galaxy_tab_a_screensaver_brightness
-            name: Number
-          - type: button
-            id: 8822164265367
-            entity_id: media_player.tablet
-            name: Media player
-          - type: button
-            id: 6295149030308
-            entity_id: light.studio_dator
-            name: Light
-          - type: button
-            id: 9445324699683
-            entity_id: input_number.monitors_volume
-            name: Input number
-          - type: button
-            id: 2832875690525
-            entity_id: input_datetime.sleep_notify_torrent
-            name: Input Datetime
-          - type: button
-            id: 5329753290519
-            entity_id: input_boolean.imac_lock
-            name: Input boolean
-          - type: button
-            id: 8154800117105
-            entity_id: event.badrum_dimmer_button_1
-            name: Event
-          - type: button
-            id: 6399086292020
-            entity_id: image.template_image
-            name: Image
-          - type: button
-            id: 8970334871265
-            entity_id: device_tracker.iphone
-            name: Device tracker
-          - type: button
-            id: 5981318553491
-            entity_id: climate.ac
-            name: Climate
-          - type: button
-            name: Automation
-            id: 1477424416058
-            entity_id: automation.backup_ha_monthly
-          - type: button
-            name: Binary sensor
-            id: 1045768288013
-            entity_id: binary_sensor.galaxy_tab_a_device_admin
-          - type: button
-            id: 7826433574180
-            entity_id: button.galaxy_tab_a_load_start_url
-            name: Button
-          - type: button
-            name: Calendar
-            id: 8928742612730
-            entity_id: calendar.home_assistant_devs
-          - type: button
-            name: Camera
-            id: 4466621036589
-            entity_id: camera.ipcam
-        id: 3178723045273
+          - id: 6659944518384
+            type: button
+            entity_id: light.master_bedroom_relay
+            name: Master Bedroom
+            more_info: false
+          - id: 2143874692005
+            type: button
+            entity_id: light.office_relay
+            name: Office
+            more_info: false
+          - id: 6907293593252
+            type: button
+            entity_id: light.bedroom_2_ceiling
+            name: Bedroom 2
+            more_info: false
+          - id: 9937701311746
+            type: button
+            entity_id: light.kitchen_light_switch_center
+            name: Kitchen Ceiling
+            more_info: false
+            icon: mdi:light-recessed
+          - id: 7224767991689
+            type: button
+            entity_id: light.kitchen_light_switch_left
+            name: Kitchen Worktops
+            more_info: false
+            icon: mdi:wall-sconce-flat
+          - id: 3281624443689
+            type: button
+            entity_id: light.kitchen_light_switch_right
+            name: Dining Area
+            more_info: false
+          - id: 2683114490406
+            type: button
+            entity_id: light.downstairs_toilet_light_switch
+            name: Downstairs Toilet
+            more_info: false
+          - id: 453166281609
+            type: button
+            entity_id: light.upstairs_landing
+            name: Upstairs Landing
+            more_info: false
+          - id: 4807122109923
+            type: button
+            entity_id: light.en_suite_relay_l1
+            name: En-suite
+            more_info: false
+            icon: mdi:light-recessed
+          - id: 446675859174
+            type: button
+            entity_id: light.living_room_coving_lights
+            name: Living Room Coving
+            icon: mdi:led-strip
+          - id: 9270963269577
+            type: button
+            entity_id: light.living_room_lamp
+          - id: 9131918004815
+            type: button
+            entity_id: light.downstairs_hallway_light
+            name: Downstairs Hallway
+          - id: 3274546442394
+            type: button
+            entity_id: light.front_driveway_light
+            name: Driveway
+            icon: mdi:coach-lamp
+            more_info: false
+          - id: 5685834367490
+            type: button
+            entity_id: light.garden_light
+            name: Garden
+            icon: mdi:coach-lamp
+          - id: 2827657685791
+            type: button
+            entity_id: light.bedroom_tv_lights
+            name: Bedroom TV Backlight
+          - id: 4679702716930
+            type: button
+            entity_id: light.main_bathroom_ceiling
+            name: Main Bathroom
+            more_info: false
+          - id: 9767393856398
+            type: button
+            entity_id: light.living_room_light_switch_right
+            more_info: false
+        id: 5486420307596
+    icon: mdi:lightbulb
+  - name: Media
+    id: 9382956637586
+    sections:
+      - name: TVs
+        items:
+          - id: 7157636731613
+            type: button
+            entity_id: media_player.living_room_tv
+          - id: 2647756560863
+            type: button
+            entity_id: media_player.bedroom_tv
+        id: 8723467502901
+      - name: Speakers
+        items:
+          - id: 3329928382346
+            type: button
+            entity_id: media_player.living_room_homepod
+            marquee: true
+            name: Living Room HomePod
+          - id: 4921584838009
+            type: button
+            entity_id: media_player.nikesh_s_echo_dot
+            marquee: true
+          - id: 2892748623929
+            type: button
+            entity_id: media_player.office_echo_dot
+            marquee: true
+          - id: 4851132945625
+            type: button
+            entity_id: media_player.master_echo_dot
+            name: Master Bedroom Echo Dot
+            marquee: true
+        id: 9243107188363
+  - name: Climate
+    id: 2992547290917
+    sections:
+      - type: horizontal-stack
+        sections:
+          - name: Upstairs
+            items:
+              - id: 1461974384329
+                type: button
+                entity_id: sensor.upstairs_temperature
+                name: Temperature
+              - id: 6303926285575
+                type: button
+                elements: []
+                entity_id: climate.upstairs
+            id: 2827033354484
+          - name: Downstairs
+            items:
+              - id: 2182075985574
+                type: button
+                entity_id: sensor.downstairs_temperature
+                name: Temperature
+              - id: 4340434294926
+                type: button
+                entity_id: climate.downstairs
+            id: 2894648907196
+        id: 5211862331579
+      - name: Ventilation
+        items:
+          - id: 8546749449908
+            type: button
+            entity_id: fan.en_suite_relay_l2
+            name: En-Suite
+            template:
+              service: |-
+                service: input_boolean.toggle
+                data: {entity_id: input_boolean.en_suite_fan_manual_trigger}
+              state: >-
+                {{ states(entity_id) }} - {% if
+                is_state("input_boolean.en_suite_fan_manual_trigger", "on") %}
+                  Manual
+                {% else %}
+                  Auto
+                {% endif %}
+            more_info: false
+          - id: 8748751056861
+            type: button
+            entity_id: fan.main_bathroom_extractor
+            name: Main Bathroom
+            more_info: false
+            template:
+              service: >-
+                service: input_boolean.toggle
+
+                data: {entity_id:
+                input_boolean.main_bathroom_fan_manual_trigger}
+              state: >-
+                {{ states(entity_id) }} - {% if
+                is_state("input_boolean.main_bathroom_fan_manual_trigger", "on")
+                %}
+                  Manual
+                {% else %}
+                  Auto
+                {% endif %}
+        id: 7291438390387
+  - name: Security
+    id: 7289053704941
+    sections:
+      - name: ''
+        items:
+          - id: 5936690744291
+            type: button
+            entity_id: alarm_control_panel.security_alarm
+            name: ''
+            color: '#d4aa11'
+          - id: 8484188310739
+            type: button
+            entity_id: lock.aqara_smart_lock_u200_lock
+            name: Front Door
+        id: 50990549361
+      - name: CCTV
+        items:
+          - id: 5457697628245
+            type: button
+            entity_id: camera.front_door
+          - id: 1427778971416
+            type: button
+            entity_id: camera.front
+          - id: 6604917182231
+            type: button
+            entity_id: camera.side
+          - id: 2427404602620
+            type: button
+            entity_id: camera.garden
+        id: 4225751041539
 sidebar:
-  - type: time
-    id: 3781246197457
+  - id: 8228188324961
+    type: time
     hour12: false
-    seconds: false
-  - type: date
-    format: test
+  - id: 3443391218440
+    type: date
     hide: none
-    shortday: false
-    shortmonth: false
-    id: 2790676345913
-  - type: template
-    id: 1506524483596
-    template: <b>Vecka {{ now().strftime("%W") }}</b>
-  - type: sensor
-    entity_id: sensor.template_greet
-    date: false
-    id: 2790676343773
-  - type: weather
-    entity_id: weather.openweathermap
-    weather_sensor: sensor.openweathermap_weather
-    extra_sensor: sensor.openweathermap_forecast_precipitation_probability
-    extra_sensor_icon: mdi:drop
-    icon_pack: meteocons
-    id: 2790676343766
-  - type: divider
-    id: 6627143742873
-  - type: sensor
-    entity_id: sensor.template_laundry
-    id: 2790676343722
-  - type: sensor
-    entity_id: sensor.template_vacuum
-    id: 2790676343733
-  - type: sensor
-    entity_id: sensor.template_mailbox
-    id: 2790676343744
-    date: false
-  - type: sensor
-    entity_id: sensor.template_battery
-    id: 2790676343711
-  - type: navigate
-    id: 4055198699454
-  - type: timer
-    entity_id: timer.test
-    id: 5786160817081
-  - type: divider
-    id: 3349273168863
-  - type: radial
-    entity_id: sensor.processor_use
-    id: 1790176343741
-    stroke: 7
-    name: CPU
-  - id: 2805049029311
-    entity_id: sensor.memory_use_percent
-    type: bar
-    name: RAM
-    math: '22'
-  - type: graph
-    id: 7932142060181
-    period: day
-    entity_id: sensor.memory_use_percent
-    stroke: 2
+    layout: vertical
+    short_day: false
+    short_month: false
+  - id: 6203481057137
+    type: divider
+  - id: 3671761183007
+    type: weather
+    entity_id: weather.forecast_home
+  - id: 6704457887286
+    type: sensor
+    entity_id: sensor.bin_collection_countdown
+    prefix: 'Bin collection '
+    suffix: .
+  - id: 3538637247392
+    type: notifications
+theme: muted
+hide_sidebar: false
+hide_views: false
+sidebarWidth: 228
