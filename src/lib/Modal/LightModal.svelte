@@ -191,7 +191,7 @@
 			<Toggle bind:checked={toggle} on:change={handleClick} />
 		</div>
 		{:else}
-			<Toggle bind:checked={toggle} on:change={handleClick} />
+	
 		{/if}
 
 		<!-- BRIGHTNESS -->
