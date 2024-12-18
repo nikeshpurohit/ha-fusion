@@ -94,13 +94,13 @@
 
 {#if isOpen}
 	<Modal>
-		<h1 slot="title">{getName(sel, entity)}</h1>
-
-		<h2>{$lang('state')}</h2>
-
-		<span class:arming={state === 'arming'}>
+		<h1 slot="title">{getName(sel, entity)} - <span class:arming={state === 'arming'}>
 			<StateLogic entity_id={sel?.entity_id} selected={sel} />
-		</span>
+		</span></h1>
+
+		<!-- <h2>{$lang('state')}</h2> -->
+
+		
 
 		{#if state === 'disarmed'}
 			<h2>{$lang('alarm_modes_label')}</h2>
