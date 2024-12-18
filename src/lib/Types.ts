@@ -88,6 +88,7 @@ export interface ButtonItem {
 	color?: string;
 	marquee?: boolean;
 	more_info?: boolean;
+	col_span?: number;
 	service?: string;
 	state: any;
 	template?: {

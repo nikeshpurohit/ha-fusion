@@ -1,11 +1,8 @@
 <script lang="ts">
-	import ComputeIcon from '$lib/Components/ComputeIcon.svelte';
-	import StateLogic from '$lib/Components/StateLogic.svelte';
 	import {
 		connection,
 		editMode,
 		itemHeight,
-		lang,
 		motion,
 		onStates,
 		climateHvacActionToMode,
@@ -17,14 +14,16 @@
 		calendarView,
 		calendarFirstDay
 	} from '$lib/Stores';
-	import { getDomain, getName, getTogglableService } from '$lib/Utils';
-	import Icon, { loadIcon } from '@iconify/svelte';
+	import { getDomain, getTogglableService } from '$lib/Utils';
 	import { callService, type HassEntity } from 'home-assistant-js-websocket';
 	import { marked } from 'marked';
 	import { onDestroy } from 'svelte';
 	import { openModal } from 'svelte-modals';
 	import Ripple from 'svelte-ripple';
 	import parser from 'js-yaml';
+	import ButtonState from '$lib/Main/ButtonState.svelte';
+	import ButtonIcon from '$lib/Main/ButtonIcon.svelte';
+	import ButtonName from '$lib/Main/ButtonName.svelte';
 
 	export let demo: string | undefined = undefined;
 	export let sel: any;
@@ -38,7 +37,6 @@
 	$: more_info = sel?.more_info;
 
 	let entity: HassEntity;
-	let contentWidth: number;
 	let container: HTMLDivElement;
 	let loading: boolean;
 	let resetLoading: ReturnType<typeof setTimeout> | null;
@@ -72,15 +70,6 @@
 	}
 
 	$: attributes = entity?.attributes;
-
-	$: iconColor = color
-		? color
-		: attributes?.hs_color
-			? `hsl(${attributes?.hs_color}%, 50%)`
-			: 'rgb(75, 166, 237)';
-
-	// icon is image if extension, e.g. test.png
-	$: image = icon?.includes('.');
 
 	$: if (sel?.template?.set_state && template?.set_state?.output) {
 		// template
@@ -480,77 +469,35 @@
 		role="button"
 		tabindex="0"
 	>
-		<div
-			class="icon"
-			data-state={stateOn}
-			style:--icon-color={iconColor}
-			style:background-color={sel?.template?.color && template?.color?.output
-				? template?.color?.output
-				: undefined}
-			style:background-image={!icon && attributes?.entity_picture
-				? `url(${attributes?.entity_picture})`
-				: image && icon
-					? `url(${icon})`
-					: 'none'}
-			class:image
-		>
-			{#if loading}
-				<img src="loader.svg" alt="loading" style="margin:0 auto" />
-			{:else if image || (!icon && attributes?.entity_picture)}
-				&nbsp;
-			{:else if icon}
-				{#await loadIcon(icon)}
-					<!-- loading -->
-					<Icon icon="ooui:help-ltr" height="none" width="100%" />
-				{:then resolvedIcon}
-					<!-- exists -->
-					<Icon icon={resolvedIcon} height="none" width="100%" />
-				{:catch}
-					<!-- doesn't exist -->
-					<Icon icon="ooui:help-ltr" height="none" width="100%" />
-				{/await}
-			{:else if entity_id}
-				<ComputeIcon {entity_id} />
-			{:else}
-				<Icon icon="ooui:help-ltr" height="none" width="100%" />
-			{/if}
-		</div>
+		<ButtonIcon
+			{icon}
+			{entity_id}
+			{color}
+			{attributes}
+			{template}
+			{loading}
+			{stateOn}
+		/>
 	</div>
 
 	<div class="right" on:click|stopPropagation={handleEvent} on:keydown role="button" tabindex="0">
 		<!-- NAME -->
-		<div class="name" data-state={stateOn}>
-			{@html (sel?.template?.name && template?.name?.output) ||
-				getName(sel, entity, sectionName) ||
-				$lang('unknown')}
-		</div>
+		<ButtonName
+			{sel}
+			{template}
+			{sectionName}
+			{entity}
+			{stateOn}
+		/>
 
 		<!-- STATE -->
-
-		<!-- only bind clientWidth if marquee is set and use svelte-fast-dimension -->
-		<div class="state" data-state={stateOn}>
-			{#if marquee}
-				<div style="width: min-content;" bind:clientWidth={contentWidth}>
-					{#if sel?.state || (sel?.template?.state && template?.state?.output)}
-						{@html sel?.state || template?.state?.output}
-					{:else if sel?.template?.set_state && template?.set_state?.output}
-						{@html sel?.template?.set_state && $lang(template?.set_state?.output)}
-					{:else}
-						<StateLogic {entity_id} selected={sel} {contentWidth} />
-					{/if}
-				</div>
-			{:else}
-				<div style="overflow: hidden; text-overflow: ellipsis;">
-					{#if sel?.state || (sel?.template?.state && template?.state?.output)}
-						{@html sel?.state || template?.state?.output}
-					{:else if sel?.template?.set_state && template?.set_state?.output}
-						{@html sel?.template?.set_state && $lang(template?.set_state?.output)}
-					{:else}
-						<StateLogic {entity_id} selected={sel} {contentWidth} />
-					{/if}
-				</div>
-			{/if}
-		</div>
+		<ButtonState
+			{sel}
+			{template}
+			{entity_id}
+			{marquee}
+			{stateOn}
+		/>
 	</div>
 </div>
 
@@ -573,11 +520,6 @@
 		overflow: hidden;
 	}
 
-	.image {
-		background-size: cover;
-		background-repeat: no-repeat;
-	}
-
 	.left {
 		display: inherit;
 		padding: var(--container-padding);
@@ -591,62 +533,9 @@
 		padding-right: var(--container-padding);
 	}
 
-	.icon {
-		--icon-size: 2.4rem;
-		grid-area: icon;
-		height: var(--icon-size);
-		width: var(--icon-size);
-		color: rgb(200 200 200);
-		background-color: rgba(0, 0, 0, 0.25);
-		border-radius: 50%;
-		display: grid;
-		align-items: center;
-		display: flex;
-		padding: 0.5rem;
-		background-position: center center;
-		background-size: cover;
-		background-repeat: no-repeat;
-	}
-
-	.name {
-		grid-area: name;
-		font-weight: 500;
-		color: inherit;
-		white-space: nowrap;
-		color: var(--theme-button-name-color-off);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-size: 0.95rem;
-		margin-top: -1px;
-	}
-
-	.state {
-		grid-area: state;
-		font-weight: 400;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		color: var(--theme-button-state-color-off);
-		font-size: 0.925rem;
-		margin-top: 1px;
-	}
-
 	.container[data-state='true'] {
 		background-color: var(--theme-button-background-color-on);
 		color: black;
-	}
-
-	.icon[data-state='true'] {
-		color: white;
-		background-color: var(--icon-color);
-	}
-
-	.name[data-state='true'] {
-		color: var(--theme-button-name-color-on);
-	}
-
-	.state[data-state='true'] {
-		color: var(--theme-button-state-color-on);
 	}
 
 	/* Phone and Tablet (portrait) */

@@ -8,7 +8,17 @@
 	import HorizontalStackHeader from '$lib/Main/HorizontalStackHeader.svelte';
 	import Scenes from '$lib/Main/Scenes.svelte';
 	import { handleVisibility, mediaQueries } from '$lib/Conditional';
-	import { generateId } from '$lib/Utils';
+	import { generateId, getDomain } from '$lib/Utils';
+	import { resizeAction, type ResizeEvent } from '../Actions/ResizeAction';
+	import type { ButtonItem } from '$lib/Types';
+
+	interface ResizableTypeConfig {
+		maxColSpan: number;
+	}
+
+	const RESIZABLE_CONFIG: Record<string, ResizableTypeConfig> = {
+		climate: { maxColSpan: 2 },
+	};
 
 	export let view: any;
 	export let altKeyPressed: boolean;
@@ -22,15 +32,36 @@
 
 	const stackHeight = $itemHeight * 1.65;
 
+	let resizeOverlay: HTMLElement | null;
+	let isResizing = false;
+
 	let mounted = false;
 	onMount(() => (mounted = true));
 
 	$: dndOptions = {
 		flipDurationMs: $motion,
-		dragDisabled: !$editMode,
+		dragDisabled: !$editMode || isResizing,
 		dropTargetStyle: {},
 		zoneTabIndex: -1
 	};
+
+	$: resizeOptions = {
+		resizeOverlay
+	};
+
+	function handleResizeStart() {
+		isResizing = true;
+	}
+
+	function handleResizeEnd(item: ButtonItem, resizeEvent: CustomEvent<ResizeEvent>) {
+		isResizing = false;
+
+		const { newColSpan } = resizeEvent.detail;
+		item.col_span = newColSpan;
+		view.sections = [...view.sections];
+
+		$record();
+	}
 
 	/**
 	 * Drag and drop common code.
@@ -180,13 +211,32 @@
     `;
 	}
 
-	function itemStyles(type: string) {
+	function itemStyles(type: string, colSpan?: number) {
+		if (colSpan) {
+			return `
+				grid-column: span ${colSpan};
+				grid-row: span 1;
+				display: ${type ? '' : 'none'};
+			`;
+		}
+
 		const large = ['conditional_media', 'picture_elements', 'camera'];
 		return `
 			grid-column: ${large.includes(type) ? 'span 2' : 'span 1'};
 			grid-row: ${large.includes(type) ? 'span 4' : 'span 1'};
 			display: ${type ? '' : 'none'};
     `;
+	}
+
+	function itemResizableConfig(item: any): ResizableTypeConfig | undefined {
+		const entity = $states?.[item?.entity_id];
+		const domain = getDomain(entity?.entity_id);
+
+		if (!domain) {
+			return undefined;
+		}
+
+		return RESIZABLE_CONFIG[domain];
 	}
 
 	/**
@@ -336,8 +386,15 @@
 										data-is-dnd-shadow-item-hint={item?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 										class="item"
 										animate:flip={{ duration: $motion }}
+										use:resizeAction={{
+											...resizeOptions,
+											resizable: $editMode && !!itemResizableConfig(item),
+											maxColSpan: itemResizableConfig(item)?.maxColSpan
+										}}
+										on:resizeStart={handleResizeStart}
+										on:resizeEnd={(event) => handleResizeEnd(item, event)}
 										tabindex="-1"
-										style={itemStyles(item?.type)}
+										style={itemStyles(item?.type, item?.col_span)}
 									>
 										<Content {item} sectionName={stackSection?.name} />
 									</div>
@@ -402,8 +459,15 @@
 							data-is-dnd-shadow-item-hint={item?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							class="item"
 							animate:flip={{ duration: $motion }}
+							use:resizeAction={{
+								...resizeOptions,
+								resizable: $editMode && !!itemResizableConfig(item),
+								maxColSpan: itemResizableConfig(item)?.maxColSpan
+							}}
+							on:resizeStart={handleResizeStart}
+							on:resizeEnd={(event) => handleResizeEnd(item, event)}
 							tabindex="-1"
-							style={itemStyles(item?.type)}
+							style={itemStyles(item?.type, item?.col_span)}
 						>
 							<Content {item} sectionName={section?.name} />
 						</div>
@@ -412,6 +476,7 @@
 			{/if}
 		</section>
 	{/each}
+	<div bind:this={resizeOverlay} class="resize-border"></div>
 </main>
 
 <style>
@@ -481,5 +546,14 @@
 
 	.scenes > .divider {
 		border-right: 1px solid transparent;
+	}
+
+	.resize-border {
+		display: none;
+		position: absolute;
+		border: 2px solid #ffc008;
+		pointer-events: none;
+		z-index: 1000;
+		border-radius: 0.65rem;
 	}
 </style>
