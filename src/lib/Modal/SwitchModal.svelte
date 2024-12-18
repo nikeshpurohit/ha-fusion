@@ -26,7 +26,7 @@
 	<Modal>
 		<h1 slot="title">{getName(sel, entity)}</h1>
 
-		<h2>{$lang('toggle')}</h2>
+		<!-- <h2>{$lang('toggle')}</h2> -->
 
 		<Toggle bind:checked={toggle} on:change={handleClick} />
 

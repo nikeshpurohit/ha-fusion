@@ -184,9 +184,15 @@
 
 		<!-- ONOFF -->
 
-		<h2>{$lang('toggle')}</h2>
-
-		<Toggle bind:checked={toggle} on:change={handleClick} />
+		<!-- <h2>{$lang('toggle')}</h2> -->
+		 <h2></h2>
+		{#if !supports?.COLOR}
+		<div class='toggle-single'>
+			<Toggle bind:checked={toggle} on:change={handleClick} />
+		</div>
+		{:else}
+			<Toggle bind:checked={toggle} on:change={handleClick} />
+		{/if}
 
 		<!-- BRIGHTNESS -->
 		{#if supports?.BRIGHTNESS}
@@ -251,3 +257,10 @@
 		<ConfigButtons />
 	</Modal>
 {/if}
+
+<style>
+	.toggle-single {
+		align-content: center;
+		display: float;
+	}
+</style>
