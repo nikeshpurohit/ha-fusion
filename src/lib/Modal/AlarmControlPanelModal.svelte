@@ -32,6 +32,17 @@
 	async function enterCode() {
 		if (!code) return;
 
+		console.log(state);
+
+		if (state === 'disarmed') {
+			selectedService = 'alarm_arm_away';
+		} 
+		else {
+			selectedService = 'alarm_disarm';
+		}
+
+		//console.log(selectedService);
+
 		try {
 			const service = selectedService || 'alarm_disarm';
 			await callService($connection, 'alarm_control_panel', service, {
@@ -100,21 +111,6 @@
 
 		<!-- <h2>{$lang('state')}</h2> -->
 
-		
-
-		{#if state === 'disarmed'}
-			<h2></h2>
-			<!-- <h2>{$lang('alarm_modes_label')}</h2> -->
-
-			<Select
-				{options}
-				placeholder={$lang('alarm_modes_label')}
-				value={'alarm_disarm'}
-				on:change={(event) => {
-					selectedService = event.detail;
-				}}
-			/>
-		{/if}
 
 		<div class="container">
 			<input type="password" class:reject bind:value={code} />
@@ -144,7 +140,11 @@
 				<button on:click={() => addCode(0)} use:Ripple={$ripple}>0</button>
 
 				<button on:click={enterCode} use:Ripple={$ripple} style:background-color="#293828">
-					<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;"></Icon>
+					{#if state === 'disarmed'}
+						<Icon icon="gravity-ui:shield" height="none" style="width: 1.8rem; color: #67ad5b;"></Icon>
+					{:else}
+						<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;"></Icon>
+					{/if}
 				</button>
 			</div>
 		</div>
@@ -164,10 +164,12 @@
 		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 		color: white;
 		width: 20rem;
+		height: 2.5rem;
 		margin: 2rem auto;
 		outline: none;
 		border-radius: 0.4rem 0.4rem 0 0;
-		background: var(--theme-button-background-color-off);
+		/* background: var(--theme-button-background-color-off); */
+		background: none;
 	}
 
 	.buttons {
