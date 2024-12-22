@@ -2,11 +2,9 @@
 
 A modern, easy-to-use and performant custom [Home Assistant](https://www.home-assistant.io/) dashboard
 
-<https://www.youtube.com/watch?v=D8mWruSuPOM>
+This is  a revived project (mostly for personal use) forked from the amazing [ha-fusion](https://github.com/matt8707/ha-fusion) project. The aim of this is to optimise ha-fusion for use with small lower resolution devices such as common wall tablets. The intention is to stay in sync with the original project with a slightly more active development strategy. 
 
-[![preview](/static/preview.png)](https://www.youtube.com/watch?v=D8mWruSuPOM)
-
-If you find this project useful, be sure to 🌟 this repository! If you love it, please consider donating! ❤️ <https://www.paypal.com/paypalme/matt8707>
+I am no expert in TypeScript or svelte, so contributions are welcome!
 
 ---
 
@@ -26,13 +24,15 @@ Development wishlist:
 
 ## Installation
 
+Addon is currently not yet available. Check back soon!
+
 ### Add-on
 
 For "Operating System" or "Supervised" installation methods, you can install ha-fusion as an add-on:
 
-1. **Add Repository**: To begin, add the ha-fusion add-on repository to your Home Assistant instance. Click the button below or manually add the repository using this URL: <https://github.com/matt8707/addon-ha-fusion>.
+1. **Add Repository**: To begin, add the ha-fusion add-on repository to your Home Assistant instance. Click the button below or manually add the repository using this URL: <https://github.com/nikeshpurohit/addon-ha-fusion-wallpanel>.
 
-   [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fmatt8707%2Faddon-ha-fusion)
+   [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fnikeshpurohit%2Faddon-ha-fusion-wallpanel)
 
 2. **Install Add-on**: After adding the repository, refresh the add-on store page. Locate ha-fusion in the list and proceed with the installation.
 
@@ -42,14 +42,14 @@ For "Operating System" or "Supervised" installation methods, you can install ha-
 
 If you're using the "Container" or "Core" installation methods, ha-fusion can be installed via Docker:
 
-1. **Docker Compose File**: Place your edited copy of the [docker-compose.yml](https://github.com/matt8707/ha-fusion/blob/main/docker-compose.yml) file in a suitable directory.
+1. **Docker Compose File**: Place your edited copy of the [docker-compose.yml](https://github.com/nikeshpurohit/ha-fusion/blob/main/docker-compose.yml) file in a suitable directory.
 
 2. **Create Container**:
    Run the following commands in your terminal to start the container:
 
    ```bash
    cd path/to/docker-compose.yml
-   docker-compose up -d ha-fusion
+   docker-compose up -d ha-fusion-wallpanel
    ```
 
 #### Update
@@ -77,7 +77,7 @@ docker run -d \
   -e TZ=Europe/Stockholm \
   -e HASS_URL=http://192.168.1.241:8123 \
   --restart always \
-  ghcr.io/matt8707/ha-fusion
+  ghcr.io/nikeshpurohit/ha-fusion-wallpanel
 ```
 
 #### Kubernetes
@@ -131,7 +131,7 @@ To begin contributing to the project, you'll first need to install node. It's al
 brew install node pnpm
 
 # install
-git clone https://github.com/matt8707/ha-fusion.git
+git clone https://github.com/nikeshpurohit/ha-fusion.git
 cd ha-fusion
 pnpm install
 
