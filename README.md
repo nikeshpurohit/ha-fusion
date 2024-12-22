@@ -1,4 +1,4 @@
-# ha-fusion
+# ha-fusion-wallpanel
 
 A modern, easy-to-use and performant custom [Home Assistant](https://www.home-assistant.io/) dashboard
 
