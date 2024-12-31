@@ -2,9 +2,29 @@
 
 A modern, easy-to-use and performant custom [Home Assistant](https://www.home-assistant.io/) dashboard
 
-This is  a revived project (mostly for personal use) forked from the amazing [ha-fusion](https://github.com/matt8707/ha-fusion) project. The aim of this is to optimise ha-fusion for use with small lower resolution devices such as common wall tablets. The intention is to stay in sync with the original project with a slightly more active development strategy. 
+This is a revived project (mostly for personal use) forked from the amazing [ha-fusion](https://github.com/matt8707/ha-fusion) project. The aim of this is to optimise ha-fusion for use with small lower resolution devices such as common wall tablets. The intention is to stay in sync with the original project with a slightly more active development strategy. 
 
+### Help Wanted!
 I am no expert in TypeScript or svelte, so contributions are welcome!
+
+## Screenshots
+
+![](image.png)
+
+
+## Roadmap
+
+   - Get Available alarm control panel modes from hass and display in alarm control panel modal
+   - Add selection of arm modes to alarm control panel modal
+   - Reduce the size of colour picker on smaller viewports to avoid scrolling
+   - Media player card
+   - Graph card in main area
+   - Audio support for cameras
+   - Scale camera stream to viewport
+   - Allow iframe as view content
+
+   - ONVIF Two way audio for compatible cameras (fully kiosk browser)
+
 
 ---
 
@@ -12,15 +32,10 @@ I am no expert in TypeScript or svelte, so contributions are welcome!
 
 The current state of this project is **pre-beta**. This means that there's basic functionality missing, incomplete features and unresolved issues. General feedback, bug reports and feature requests are welcome!
 
-Development wishlist:
-   - Get Available alarm control panel modes from hass and display in alarm control panel modal
-   - Add selection of arm modes to alarm control panel modal
-   - Reduce the size of colour picker on smaller veiwports to avoid scrolling
-   - Media player card
-   - Graph card in main area
 
 
 ---
+
 
 ## Installation
 
@@ -131,7 +146,7 @@ To begin contributing to the project, you'll first need to install node. It's al
 brew install node pnpm
 
 # install
-git clone https://github.com/nikeshpurohit/ha-fusion.git
+git clone https://github.com/nikeshpurohit/ha-fusion-wallpanel.git
 cd ha-fusion
 pnpm install
 
