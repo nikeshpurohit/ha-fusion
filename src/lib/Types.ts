@@ -7,6 +7,7 @@ export interface Configuration {
 	hassUrl?: string;
 	locale?: string;
 	custom_js?: boolean;
+	custom_css?: boolean;
 	motion?: boolean;
 	addons?: Addons;
 	token?: string;
@@ -41,6 +42,9 @@ export interface Section {
 	name?: string;
 	items?: Item[];
 	visibility?: {
+		conditions?: Condition[];
+	}[];
+	item_visibility_template?: {
 		conditions?: Condition[];
 	}[];
 
@@ -88,8 +92,12 @@ export interface ButtonItem {
 	color?: string;
 	marquee?: boolean;
 	more_info?: boolean;
+	display_only?: boolean;
 	service?: string;
 	state: any;
+	visibility?: {
+		conditions?: Condition[];
+	}[];
 	template?: {
 		[key: string]: {
 			set_state?: string;
@@ -236,6 +244,9 @@ export interface TemplateItem {
 	type?: string;
 	id?: number;
 	template?: string;
+	icon?: string;
+	icon_size?: string;
+	icon_color?: string;
 	hide_mobile?: boolean;
 }
 

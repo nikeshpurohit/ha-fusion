@@ -18,6 +18,7 @@
 	import Ripple from 'svelte-ripple';
 	import InputClear from '$lib/Components/InputClear.svelte';
 	import ConfigButtons from '$lib/Modal/ConfigButtons.svelte';
+	import VisibilityItemButton from '$lib/Main/VisibilityItemButton.svelte';
 	import { updateObj, getDomain, getName, getTogglableService } from '$lib/Utils';
 	import type { ButtonItem } from '$lib/Types';
 	import { openModal } from 'svelte-modals';
@@ -389,6 +390,26 @@
 			</button>
 		</div>
 
+		<h2>{$lang('display_only')}</h2>
+
+		<div class="button-container">
+			<button
+				class:selected={!sel?.display_only}
+				on:click={() => set('display_only')}
+				use:Ripple={$ripple}
+			>
+				{$lang('no')}
+			</button>
+
+			<button
+				class:selected={sel?.display_only === true}
+				on:click={() => set('display_only', true)}
+				use:Ripple={$ripple}
+			>
+				{$lang('yes')}
+			</button>
+		</div>
+
 		{#if getDomain(entity_id) === 'media_player'}
 			<h2>Marquee</h2>
 
@@ -410,6 +431,11 @@
 				</button>
 			</div>
 		{/if}
+
+		<h2>{$lang('visibility')}</h2>
+		<div style="display: flex; gap: 0.8rem;">
+			<VisibilityItemButton item={sel} />
+		</div>
 
 		<ConfigButtons {sel} />
 	</Modal>

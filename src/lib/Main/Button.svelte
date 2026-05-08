@@ -37,6 +37,7 @@
 	$: color = (sel?.template?.color && template?.color?.output) || sel?.color;
 	$: marquee = sel?.marquee;
 	$: more_info = sel?.more_info;
+	$: displayOnly = sel?.display_only;
 
 	let entity: HassEntity;
 	let contentWidth: number;
@@ -235,6 +236,13 @@
 					break;
 				}
 
+				// button
+				case 'button':
+					callService($connection, 'button', 'press', {
+						entity_id: sel?.entity_id
+					});
+					break;
+
 				// sensor
 				case 'air_quality':
 				case 'date':
@@ -246,7 +254,6 @@
 				case 'binary_sensor':
 				case 'stt':
 				case 'weather':
-				case 'button':
 				case 'scene':
 				case 'schedule':
 				case 'sun':
@@ -522,21 +529,22 @@
 	bind:this={container}
 	data-state={stateOn}
 	tabindex="-1"
-	style={!$editMode ? 'cursor: pointer;' : ''}
-	style:touch-action={isLight && !$editMode && entity?.state === 'on' ? 'none' : 'auto'}
+	style={!$editMode && !displayOnly ? 'cursor: pointer;' : ''}
+	style:touch-action={isLight && !$editMode && !displayOnly && entity?.state === 'on' ? 'none' : 'auto'}
 	style:min-height="{$itemHeight}px"
-	on:pointerenter={handlePointer}
-	on:pointerdown={handlePointerDown}
-	on:pointermove={handleDragMove}
-	on:pointerup={handleDragEnd}
-	on:pointercancel={handleDragCancel}
+	on:pointerenter={!displayOnly || $editMode ? handlePointer : undefined}
+	on:pointerdown={!displayOnly || $editMode ? handlePointerDown : undefined}
+	on:pointermove={!displayOnly || $editMode ? handleDragMove : undefined}
+	on:pointerup={!displayOnly || $editMode ? handleDragEnd : undefined}
+	on:pointercancel={!displayOnly || $editMode ? handleDragCancel : undefined}
 	use:Ripple={{
 		...$ripple,
-		color: !$editMode
-			? stateOn
-				? 'rgba(0, 0, 0, 0.25)'
-				: 'rgba(255, 255, 255, 0.15)'
-			: 'rgba(0, 0, 0, 0)'
+		color:
+			!$editMode && !displayOnly
+				? stateOn
+					? 'rgba(0, 0, 0, 0.25)'
+					: 'rgba(255, 255, 255, 0.15)'
+				: 'rgba(0, 0, 0, 0)'
 	}}
 >
 	<!-- DRAG OVERLAY (solo per luci) -->
@@ -557,10 +565,10 @@
 				return;
 			}
 			if (isDragging) return;
-			if (!$editMode) {
-				toggle();
-			} else {
+			if ($editMode) {
 				handleEvent(event);
+			} else if (!displayOnly) {
+				toggle();
 			}
 		}}
 		on:keydown
@@ -611,7 +619,7 @@
 				wasDragging = false;
 				return;
 			}
-			if (!isDragging) handleEvent(e);
+			if (!isDragging && (!displayOnly || $editMode)) handleEvent(e);
 		}}
 		on:keydown
 		role="button"

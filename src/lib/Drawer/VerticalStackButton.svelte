@@ -5,34 +5,26 @@
 	import { generateId } from '$lib/Utils';
 	import { createEventDispatcher } from 'svelte';
 
+	const dispatch = createEventDispatcher();
+
 	export let view: any;
 
 	$: noViews = !$dashboard?.views?.length;
 
-	const dispatch = createEventDispatcher();
-
-	/**
-	 * Creates a new section object
-	 * in current view
-	 */
 	function handleClick() {
 		if (!view || !view.sections) return;
 
-		// prepend section
 		view.sections = [
 			{
-				name: $lang('section'),
-				items: [],
+				type: 'vertical-stack',
+				sections: [],
 				id: generateId($dashboard)
 			},
 			...view.sections
 		];
 
-		// trigger reactivity by reassigning to self
 		$dashboard = $dashboard;
-
 		$record();
-
 		dispatch('clicked');
 	}
 </script>
@@ -52,6 +44,5 @@
 		<Icon icon="gg:row-first" height="none" />
 	</figure>
 
-	{$lang('section')}
+	{$lang('vertical_stack')}
 </button>
-
