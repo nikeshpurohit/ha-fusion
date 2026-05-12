@@ -38,7 +38,14 @@ export default tseslint.config(
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/ban-ts-comment': 'off',
-			'svelte/no-at-html-tags': 'off'
+			'svelte/no-at-html-tags': 'off',
+			// v3 rules disabled: high false-positive rate in Svelte 4 or require large refactor
+			'svelte/require-each-key': 'off',
+			'svelte/infinite-reactive-loop': 'off',
+			'svelte/require-event-dispatcher-types': 'off',
+			'svelte/no-reactive-reassign': 'off',
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/no-reactive-functions': 'off'
 		}
 	}
 );

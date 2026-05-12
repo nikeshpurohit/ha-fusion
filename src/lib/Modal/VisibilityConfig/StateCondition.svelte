@@ -77,7 +77,7 @@
 	value={item.entity}
 	on:change={(event) => handleEntity(item?.id, event?.detail)}
 	computeIcons={true}
-	defaultIcon={'mdi:state-machine'}
+	defaultIcon="mdi:state-machine"
 />
 
 <br />

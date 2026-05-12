@@ -19,7 +19,6 @@
 	import Empty from '$lib/Main/Empty.svelte';
 	import ConfigButtons from '$lib/Modal/ConfigButtons.svelte';
 	import Ripple from 'svelte-ripple';
-	import PictureElements from '$lib/Main/PictureElements.svelte';
 	import Icon from '@iconify/svelte';
 
 	export let isOpen: boolean;

@@ -1,6 +1,6 @@
 {
     "name": "ha-fusion",
-    "version": "v2026.5.2",
+    "version": "v2026.5.3",
     "private": true,
     "scripts": {
         "dev": "vite dev",
@@ -30,7 +30,7 @@
         "@types/promise-fs": "^2.1.5",
         "eslint": "^9.39.4",
         "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-svelte": "^2.44.1",
+        "eslint-plugin-svelte": "^3.17.1",
         "globals": "^15.11.0",
         "prettier": "^3.3.3",
         "prettier-plugin-svelte": "^3.2.7",

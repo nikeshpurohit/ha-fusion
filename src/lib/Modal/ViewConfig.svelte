@@ -74,7 +74,7 @@
 				<input
 					class="input"
 					type="text"
-					placeholder={'fluent:tab-add-24-filled'}
+					placeholder="fluent:tab-add-24-filled"
 					bind:value={icon}
 					on:change={(event) => set('icon', event)}
 					style:padding

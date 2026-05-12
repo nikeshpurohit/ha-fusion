@@ -28,6 +28,9 @@
 	$: rgbColor = attributes?.rgb_color;
 	$: colorTempKelvin = attributes?.color_temp_kelvin;
 
+	let prevColorTempKelvin: number | undefined;
+	let prevRgbColor: number[] | undefined;
+
 	/**
 	 * If changing color and quickly selecting temperature tab, the last
 	 * service call will be a temperature value... Prevent this behavior
@@ -58,7 +61,7 @@
 		}
 	];
 
-	$: if (picker) {
+	$: if (picker && !interacting) {
 		// Layout
 		if (tempSelected) {
 			picker.setOptions({ layout: temperatureLayout });
@@ -68,14 +71,17 @@
 	}
 
 	$: if (picker && !interacting) {
-		// Color or Temperature
-		if (colorMode === 'xy' && rgbColor) {
+		// Color or Temperature — only sync when the HA value actually changes,
+		// not just because interacting flipped, to avoid reverting optimistic position
+		if (colorMode === 'xy' && rgbColor && rgbColor !== prevRgbColor) {
+			prevRgbColor = rgbColor;
 			picker.color.rgb = {
 				r: rgbColor[0],
 				g: rgbColor[1],
 				b: rgbColor[2]
 			};
-		} else if (colorMode === 'color_temp' && colorTempKelvin) {
+		} else if (colorMode === 'color_temp' && colorTempKelvin && colorTempKelvin !== prevColorTempKelvin) {
+			prevColorTempKelvin = colorTempKelvin;
 			picker.color.kelvin = colorTempKelvin;
 		}
 	}
@@ -124,18 +130,14 @@
 		kelvinNumber = Math.round(color?.kelvin);
 		if (request) return;
 
-		const type =
-			typeof picker?.state?.layout?.[0] !== 'string'
-				? picker?.state?.layout?.[0]?.options?.sliderType
-				: undefined;
-
 		let data;
 
-		if (type === 'kelvin' && supportedColorModes?.includes('color_temp')) {
-			data = {
-				kelvin: color?.kelvin
-			};
-		} else if (!type) {
+		if (tempSelected && supportedColorModes?.includes('color_temp')) {
+			data =
+				attributes?.min_color_temp_kelvin !== undefined
+					? { color_temp_kelvin: Math.round(color?.kelvin) }
+					: { color_temp: Math.round(1000000 / color?.kelvin) };
+		} else if (colorSelected) {
 			data = {
 				rgb_color: [color.rgb.r, color.rgb.g, color.rgb.b]
 			};

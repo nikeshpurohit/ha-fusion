@@ -119,6 +119,7 @@
 					return geolocate;
 				},
 				onRemove: () => {
+					// eslint-disable-next-line svelte/no-dom-manipulating
 					geolocate.remove();
 				}
 			},
@@ -133,6 +134,7 @@
 					return theme;
 				},
 				onRemove: () => {
+					// eslint-disable-next-line svelte/no-dom-manipulating
 					theme.remove();
 				}
 			},

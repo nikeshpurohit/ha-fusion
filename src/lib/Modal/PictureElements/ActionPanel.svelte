@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { connection, services, states } from '$lib/Stores';
-	import { callService, subscribeServices } from 'home-assistant-js-websocket';
+	import { callService } from 'home-assistant-js-websocket';
 	import type { ShapeConfig } from 'konva/lib/Shape';
 	import { KonvaEditor } from '$lib/Modal/PictureElements/konvaEditor';
 	import Icon from '@iconify/svelte';
