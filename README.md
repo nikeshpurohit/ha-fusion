@@ -24,9 +24,9 @@ Sometimes a single entity isn't enough for a tile. The Custom Panel lets you bui
 
 On a wall panel you want the main floor plan visible most of the time. Mark a view as the default and set a timeout — after that many seconds without interaction the dashboard quietly returns to it. Open a camera feed, walk away, come back to the floor plan. Modals hold the timer while they're open.
 
-### Everything else
+### Polish and documentation
 
-The smaller things that I kept missing and eventually built: a numeric keypad for locks that need a code, `input_datetime` displayed as a real date instead of a raw string, display-only button tiles for read-only sensors, horizontal brightness drag on light tiles, custom CSS injected at runtime and editable in-app, binary sensor sidebar widget, template sidebar items with icons, five new gradient themes, vertical stacks, visibility conditions per item, and a full bilingual (EN/IT) manual bundled with the app — no external link required.
+Along the way we fixed the small rough edges that had accumulated in the original fork — entity formatting, edge cases in modals, auth robustness, a handful of upstream bugs. And because a powerful dashboard is useless if you can't figure out how to use it, there's a full bilingual (EN/IT) manual bundled with the app and accessible with one tap from the toolbar.
 
 ---
 
@@ -124,7 +124,7 @@ docker logs nova-domus   # backend errors
 
 ## Credits
 
-Nova Domus stands on the work of [matt8707](https://github.com/matt8707/ha-fusion). The original dashboard design, architecture, and entity integrations are his. If you want a stable, upstream-maintained version, use his — it's great. This one just scratches different itches.
+Nova Domus stands on the work of [matt8707](https://github.com/matt8707/ha-fusion). The original dashboard design, architecture, and entity integrations are his — this project would not exist without that foundation.
 
 ---
 
