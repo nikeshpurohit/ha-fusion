@@ -17,25 +17,25 @@
 		getWeatherForecastEntity
 	} from '$lib/Modal/getRandomEntity';
 
+	import AiAssistant from '$lib/Sidebar/AiAssistant.svelte';
 	import Bar from '$lib/Sidebar/Bar.svelte';
+	import BinarySensor from '$lib/Sidebar/BinarySensor.svelte';
 	import Sensor from '$lib/Sidebar/Sensor.svelte';
 	import Time from '$lib/Sidebar/Time.svelte';
 	import Date from '$lib/Sidebar/Date.svelte';
-	import Divider from '$lib/Sidebar/Divider.svelte';
-	import Navigate from '$lib/Sidebar/Navigate.svelte';
 	import Weather from '$lib/Sidebar/Weather.svelte';
 	import WeatherForecast from '$lib/Sidebar/WeatherForecast.svelte';
-	import Iframe from '$lib/Sidebar/Iframe.svelte';
 	import Image from '$lib/Sidebar/Image.svelte';
 	import Camera from '$lib/Main/Camera.svelte';
 	import History from '$lib/Sidebar/History.svelte';
 	import Graph from '$lib/Sidebar/Graph.svelte';
 	import Template from '$lib/Sidebar/Template.svelte';
 	import Timer from '$lib/Sidebar/Timer.svelte';
+	import Notifications from '$lib/Sidebar/Notifications.svelte';
 	import ConfigButtons from '$lib/Modal/ConfigButtons.svelte';
 	import Radial from '$lib/Sidebar/Radial.svelte';
-	import Notifications from '$lib/Sidebar/Notifications.svelte';
 	import Ripple from 'svelte-ripple';
+	import Icon from '@iconify/svelte';
 
 	export let isOpen: boolean;
 	export let sel: SidebarItem;
@@ -88,155 +88,127 @@
 		type: string;
 		component?: any;
 		props?: any;
-		style?: any;
+		preview_icon?: string;
 	}[];
 
 	$: itemTypes = [
 		{
+			id: 'ai_assistant',
+			type: $lang('ai_assistant'),
+			component: AiAssistant,
+			props: { sel: { type: 'ai_assistant' } }
+		},
+		{
+			id: 'binary_sensor',
+			type: $lang('binary_sensor'),
+			component: BinarySensor,
+			props: {
+				demo: 'on',
+				name: 'Porta ingresso',
+				on_value: 'Aperta',
+				off_value: 'Chiusa',
+				icon_on: 'mdi:door-open',
+				icon_off: 'mdi:door-closed',
+				color_on: '#4fc3f7'
+			}
+		},
+		{
 			id: 'sensor',
 			type: $lang('sensor'),
 			component: Sensor,
-			props: {
-				entity_id: $demo.sensor
-			},
-			style: {
-				'text-align': 'center'
-			}
+			props: { demo: '23.5 °C' }
 		},
 		{
 			id: 'template',
 			type: $lang('template'),
 			component: Template,
-			props: {
-				demo: true
-			}
+			props: { demo: true }
 		},
 		{
 			id: 'divider',
 			type: $lang('divider'),
-			component: Divider
+			preview_icon: 'mdi:minus'
 		},
 		{
 			id: 'bar',
 			type: 'Bar',
 			component: Bar,
-			props: {
-				entity_id: $demo.bar
-			}
+			props: { demo: 72, name: 'Consumo' }
 		},
 		{
 			id: 'notifications',
 			type: 'Notifications',
-			component: Notifications
+			component: Notifications,
+			props: { demo: true, sel: { expand: true } }
 		},
 		{
 			id: 'time',
 			type: $lang('time'),
 			component: Time,
-			props: {
-				hour12: sel?.hour12 || false
-			},
-			style: {
-				'text-align': 'center'
-			}
+			props: { hour12: sel?.hour12 || false }
 		},
 		{
 			id: 'camera',
 			type: $lang('camera'),
 			component: Camera,
-			props: {
-				demo: $demo.camera,
-				sel,
-				responsive: true,
-				controls: false,
-				muted: true
-			}
+			props: { demo: $demo.camera, sel, responsive: true, controls: false, muted: true }
 		},
 		{
 			id: 'history',
 			type: $lang('history'),
 			component: History,
-			props: {
-				entity_id: $demo.history
-			}
+			props: { entity_id: $demo.history }
 		},
 		{
 			id: 'image',
 			type: $lang('picture'),
 			component: Image,
-			props: {
-				url: imageData
-			}
+			props: { url: imageData }
 		},
 		{
 			id: 'iframe',
 			type: $lang('iframe'),
-			component: Iframe
+			preview_icon: 'fontisto:world-o'
 		},
 		{
 			id: 'graph',
 			type: $lang('graph'),
 			component: Graph,
-			props: {
-				entity_id: $demo.graph
-			}
+			props: { entity_id: $demo.graph }
 		},
 		{
 			id: 'date',
 			type: $lang('date'),
-			component: Date,
-			style: {
-				'text-align': 'center'
-			}
+			component: Date
 		},
 		{
 			id: 'radial',
 			type: 'Radial',
 			component: Radial,
-			props: {
-				entity_id: $demo.radial
-			}
+			props: { demo: 68, name: 'Radial' }
 		},
 		{
 			id: 'weather',
 			type: $lang('weather'),
 			component: Weather,
-			props: {
-				sel: {
-					...sel,
-					entity_id: $demo.weather
-				}
-			}
+			props: { sel: { ...sel, entity_id: $demo.weather } }
 		},
 		{
 			id: 'weather_forecast',
 			type: $lang('weather_forecast'),
 			component: WeatherForecast,
-			props: {
-				sel: {
-					...sel,
-					entity_id: $demo.weather_forecast
-				}
-			}
+			props: { sel: { ...sel, entity_id: $demo.weather_forecast } }
 		},
 		{
 			id: 'navigate',
 			type: $lang('navigate'),
-			component: Navigate,
-			props: {
-				modalTransitionEnd
-			}
+			preview_icon: 'mdi:tab'
 		},
 		{
 			id: 'timer',
 			type: $lang('timer'),
 			component: Timer,
-			props: {
-				sel: {
-					...sel,
-					entity_id: $demo.timer
-				}
-			}
+			props: { sel: { ...sel, entity_id: $demo.timer } }
 		}
 	];
 
@@ -251,6 +223,14 @@
 		$record();
 
 		switch (sel?.type) {
+			case 'ai_assistant':
+				openModal(() => import('$lib/Modal/AiAssistantConfig.svelte'), { sel });
+				break;
+
+			case 'binary_sensor':
+				openModal(() => import('$lib/Modal/BinarySensorConfig.svelte'), { sel });
+				break;
+
 			case 'time':
 				openModal(() => import('$lib/Modal/TimeConfig.svelte'), { sel });
 				break;
@@ -405,20 +385,22 @@
 		</div>
 
 		<div class="container">
-			{#each filter as { id, type, component, props, style } (id)}
+			{#each filter as { id, type, component, props, preview_icon } (id)}
 				<button
 					on:click={() => handleClick(id)}
 					animate:flip={{ duration: $motion }}
-					style:text-align={style?.['text-align'] || 'start'}
 					use:Ripple={$ripple}
 				>
-					<div class="header">
-						{type}
-					</div>
-
 					<div class="preview" class:camera={id === 'camera'}>
-						<svelte:component this={component} {...props} />
+						{#if component}
+							<svelte:component this={component} {...props} />
+						{:else if preview_icon}
+							<div class="preview-icon">
+								<Icon icon={preview_icon} height="none" />
+							</div>
+						{/if}
 					</div>
+					<div class="footer">{type}</div>
 				</button>
 			{/each}
 		</div>
@@ -430,39 +412,57 @@
 <style>
 	.container {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-		grid-gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+		gap: 0.75rem;
 		overflow: auto;
 		align-content: start;
 	}
 
 	button {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		padding: 0;
 		font-family: inherit;
 		cursor: pointer;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 0.8em;
-		background-color: rgba(0, 0, 0, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 0.8rem;
+		background-color: rgba(255, 255, 255, 0.04);
 		height: 10rem;
 		outline-offset: -2px;
+		overflow: hidden;
+		transition:
+			border-color 150ms ease,
+			background-color 150ms ease;
 	}
 
-	.header {
-		background-color: rgba(0, 0, 0, 0.2);
-		padding: 0.8em 1em 0.7em 1em;
-		color: white;
-		font-weight: 500;
-		display: inline-flex;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-		font-size: 1rem;
-		height: min-content;
+	button:hover {
+		border-color: rgba(255, 255, 255, 0.22);
+		background-color: rgba(255, 255, 255, 0.07);
 	}
 
 	.preview {
+		flex: 1;
 		color: white;
-		padding: 0 1.5rem;
+		padding: 0 1.2rem;
 		min-width: -webkit-fill-available;
+		display: flex;
+		align-items: center;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.footer {
+		padding: 0.45rem 0.9rem 0.5rem;
+		color: rgba(255, 255, 255, 0.45);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: left;
 	}
 
 	.search {
@@ -470,7 +470,55 @@
 	}
 
 	.camera {
-		padding: 1rem 1.2rem;
+		padding: 0.8rem 1rem;
 		height: inherit;
+	}
+
+	.preview-icon {
+		width: 3rem;
+		opacity: 0.35;
+		margin: auto;
+	}
+
+	/* Large phones / phablets (480px – 767px) */
+	@media (min-width: 480px) and (max-width: 767px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+		}
+	}
+
+	/* Tablets (768px – 1023px) */
+	@media (min-width: 768px) and (max-width: 1023px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+		}
+
+		button {
+			height: 10.5rem;
+		}
+	}
+
+	/* FHD monitors (1366px – 1919px) */
+	@media (min-width: 1366px) and (max-width: 1919px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+			gap: 0.9rem;
+		}
+
+		button {
+			height: 11rem;
+		}
+	}
+
+	/* QHD / 4K (≥ 1920px) */
+	@media (min-width: 1920px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+			gap: 1.1rem;
+		}
+
+		button {
+			height: 12.5rem;
+		}
 	}
 </style>

@@ -274,4 +274,48 @@
 	button:focus {
 		color: inherit;
 	}
+
+	/* Small phones (< 480px) — quasi full-screen */
+	@media (max-width: 479px) {
+		.contents {
+			width: 96vw !important;
+			max-width: 96vw;
+			max-height: 90vh;
+			padding: 1.1rem 1.1rem 1.3rem;
+			border-radius: 0.9rem;
+		}
+	}
+
+	/* Large phones / phablets (480px – 767px) */
+	@media (min-width: 480px) and (max-width: 767px) {
+		.contents {
+			width: 90vw !important;
+			max-width: 90vw;
+			max-height: 88vh;
+			padding: 1.4rem 1.5rem 1.7rem;
+		}
+	}
+
+	/* Tablets portrait (768px – 1023px) */
+	@media (min-width: 768px) and (max-width: 1023px) {
+		.contents {
+			max-height: 82vh;
+		}
+	}
+
+	/* FHD monitors (1366px – 1919px) */
+	@media (min-width: 1366px) and (max-width: 1919px) {
+		.contents {
+			max-height: 80vh;
+		}
+	}
+
+	/* QHD / 4K displays (≥ 1920px) */
+	@media (min-width: 1920px) {
+		.contents {
+			padding: 2rem 2.5rem 2.5rem;
+			max-height: 75vh;
+			border-radius: 1.5rem;
+		}
+	}
 </style>

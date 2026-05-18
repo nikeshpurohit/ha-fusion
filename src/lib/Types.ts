@@ -35,6 +35,8 @@ export interface Views {
 	icon?: string;
 	sections?: Section[];
 	isDndShadowItem?: boolean;
+	is_default?: boolean;
+	default_timeout?: number;
 }
 
 export interface Section {
@@ -77,6 +79,8 @@ export interface ViewItem {
 	name?: string;
 	icon?: string;
 	sections?: any[];
+	is_default?: boolean;
+	default_timeout?: number;
 }
 
 export interface EmptyItem {
@@ -130,6 +134,7 @@ export interface PersistentNotification {
 }
 
 export type SidebarItem = BarItem &
+	BinarySensorItem &
 	CameraItem &
 	DateItem &
 	GraphItem &
@@ -143,7 +148,42 @@ export type SidebarItem = BarItem &
 	TimeItem &
 	WeatherItem &
 	WeatherForecastItem &
-	DividerItem;
+	DividerItem &
+	AiAssistantItem;
+
+export interface BinarySensorItem {
+	type?: string;
+	id?: number;
+	entity_id?: string;
+	name?: string;
+	prefix?: string;
+	suffix?: string;
+	on_value?: string;
+	off_value?: string;
+	icon_on?: string;
+	icon_off?: string;
+	color_on?: string;
+	color_off?: string;
+	hide_mobile?: boolean;
+}
+
+export interface AiAssistantItem {
+	type?: string;
+	id?: number;
+	name?: string;
+	icon?: string;
+	agent_id?: string;
+	wake_word?: string;
+	hide_mobile?: boolean;
+	tts_enabled?: boolean;
+	tts_voice?: string;
+}
+
+export interface AiMessage {
+	role: 'user' | 'assistant';
+	content: string;
+	timestamp: number;
+}
 
 export interface BarItem {
 	type?: string;

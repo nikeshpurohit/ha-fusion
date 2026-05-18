@@ -13,13 +13,45 @@
 	export let sel: ViewItem;
 
 	let name = sel?.name;
-
 	let icon: string | undefined = sel?.icon;
+	let is_default: boolean = !!sel?.is_default;
+	let default_timeout: number | undefined = sel?.default_timeout;
 
 	const nameConst = name;
 
 	function set(key: string, event?: any) {
 		sel = updateObj(sel, key, event);
+		$dashboard = $dashboard;
+	}
+
+	function toggleDefault() {
+		is_default = !is_default;
+		if (is_default) {
+			$dashboard.views.forEach((v) => {
+				if (v.id !== sel.id) {
+					delete v.is_default;
+					delete v.default_timeout;
+				}
+			});
+			sel = updateObj(sel, 'is_default', true);
+			if (!default_timeout) {
+				default_timeout = 30;
+				sel = updateObj(sel, 'default_timeout', 30);
+			}
+		} else {
+			sel = updateObj(sel, 'is_default');
+			sel = updateObj(sel, 'default_timeout');
+			default_timeout = undefined;
+		}
+		$dashboard = $dashboard;
+	}
+
+	function setDefaultTimeout(event: Event) {
+		const val = parseInt((event.target as HTMLInputElement).value);
+		default_timeout = val > 0 ? val : undefined;
+		sel = default_timeout
+			? updateObj(sel, 'default_timeout', default_timeout)
+			: updateObj(sel, 'default_timeout');
 		$dashboard = $dashboard;
 	}
 
@@ -95,6 +127,31 @@
 			</button>
 		</div>
 
+		<h2>{$lang('default_view')}</h2>
+
+		<div class="button-container">
+			<button class:selected={!is_default} on:click={() => is_default && toggleDefault()} use:Ripple={$ripple}>
+				{$lang('no')}
+			</button>
+			<button class:selected={is_default} on:click={() => !is_default && toggleDefault()} use:Ripple={$ripple}>
+				{$lang('yes')}
+			</button>
+		</div>
+
+		{#if is_default}
+			<h2>{$lang('return_after')} ({$lang('seconds')?.toLowerCase()})</h2>
+
+			<input
+				class="input"
+				type="number"
+				min="5"
+				step="5"
+				placeholder="30"
+				value={default_timeout ?? ''}
+				on:change={setDefaultTimeout}
+			/>
+		{/if}
+
 		<ConfigButtons {sel} />
 	</Modal>
 {/if}
@@ -113,4 +170,5 @@
 		padding-bottom: 3px;
 		white-space: nowrap;
 	}
+
 </style>

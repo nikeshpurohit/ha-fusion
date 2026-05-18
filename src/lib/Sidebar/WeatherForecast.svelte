@@ -191,9 +191,6 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		justify-content: space-between;
-		padding-left: 0;
-		padding-right: 0.25rem;
-		margin-left: -0.1rem;
 		height: 7.5rem;
 	}
 

@@ -119,13 +119,9 @@
 		style:pointer-events={$modals.length !== 0 ? 'none' : 'unset'}
 		style:cursor={$editMode || $modals.length !== 0 ? 'unset' : 'pointer'}
 		style:background-color={state === 'active' && entity_id
-			? 'rgba(0, 0, 0, 0.25)'
-			: 'rgba(0, 0, 0, 0)'}
-		style:padding={state === 'active' && entity_id
-			? '0.35rem 0.65rem 0.35rem 0.45rem'
-			: '0 0.65rem 0 0.45rem'}
-		style:transition="color {$motion}ms ease, background-color {$motion}ms ease, padding {$motion}ms
-		ease"
+			? 'rgba(0, 0, 0, 0.2)'
+			: 'transparent'}
+		style:transition="background-color {$motion}ms ease"
 	>
 		<div class="icon" style:color={finishes_at ? 'orange' : 'rgba(255, 255, 255, 0.5)'}>
 			<Icon icon="ic:twotone-timer" height="none" />
@@ -177,50 +173,55 @@
 
 	.container {
 		display: flex;
+		align-items: center;
+		gap: 0.6rem;
 		text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-		border-radius: 0.65rem;
-		margin-left: -0.6rem;
-		margin-right: -0.6rem;
+		border-radius: 0.6rem;
+		padding: 0.35rem 0.5rem;
 	}
 
 	.icon {
-		flex-shrink: 1;
-		width: 3.35rem;
-		height: 3.35rem;
-		align-self: center;
-		margin-bottom: -0.2rem;
-		margin-left: -0.25rem;
-		margin-top: -0.05rem;
+		flex-shrink: 0;
+		width: 2.8rem;
+		height: 2.8rem;
+		display: flex;
+		align-items: center;
 	}
 
 	.column {
 		display: flex;
 		flex-direction: column;
-		margin-left: 0.2rem;
 		flex-grow: 1;
-		margin-left: 0.6rem;
+		min-width: 0;
+		line-height: 1.25;
 	}
 
 	.name {
-		margin-top: 0.1rem;
-		margin-bottom: -0.2rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		opacity: 0.55;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.counter {
-		font-size: 1.8rem;
-		transition: font-size 190ms ease;
+		font-size: 1.6rem;
 		font-weight: 500;
 	}
 
 	.start_pause {
-		flex-shrink: 1;
-		width: 2.5rem;
-		height: 2.5rem;
+		flex-shrink: 0;
+		width: 2.2rem;
+		height: 2.2rem;
 		background-color: var(--theme-navigate-background-color);
 		border-radius: 50%;
-		padding: 0.4rem;
-		align-self: center;
+		padding: 0.35rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		color: inherit;
 		border: none;
+		cursor: pointer;
 	}
 </style>

@@ -17,13 +17,24 @@
 	import { marked } from 'marked';
 
 	export let sel: any = undefined;
+	export let demo: boolean = false;
 	let expanded = false;
 
-	$: length = Object.entries($persistentNotifications)?.length;
+	const demoNotifications: Record<string, { title?: string; message: string; created_at?: string }> =
+		{
+			'demo-1': {
+				title: 'Sistema aggiornato',
+				message: 'Home Assistant è pronto per il riavvio.',
+				created_at: new Date(Date.now() - 120000).toISOString()
+			}
+		};
+
+	$: notifications = demo ? demoNotifications : $persistentNotifications;
+	$: length = Object.entries(notifications)?.length;
 	$: empty = length < 1;
 
 	function handleClick(key: string) {
-		if ($editMode) return;
+		if ($editMode || demo) return;
 
 		// if last item collapse
 		if (length === 1) {
@@ -76,9 +87,9 @@
 	style:transition="margin-bottom {$motion}ms ease, grid-template-rows {$motion}ms ease"
 >
 	<div style:overflow="hidden">
-		{#each Object.entries($persistentNotifications) as [key, value] (key)}
+		{#each Object.entries(notifications) as [key, value] (key)}
 			<div class="item" transition:slide={{ duration: $motion }}>
-				{#if Object.keys($persistentNotifications)?.length > 0}
+				{#if Object.keys(notifications)?.length > 0}
 					<div class="inner">
 						{#if value?.title}
 							<div class="notification-title">

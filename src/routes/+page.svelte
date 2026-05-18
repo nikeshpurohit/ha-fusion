@@ -31,6 +31,24 @@
 	export let data;
 
 	let altKeyPressed = false;
+	let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function resetInactivityTimer() {
+		if (inactivityTimer) {
+			clearTimeout(inactivityTimer);
+			inactivityTimer = null;
+		}
+		const defaultView = $dashboard?.views?.find((v) => v.is_default);
+		if (!defaultView?.default_timeout || $editMode || $modals.length > 0) return;
+		if ($currentViewId === defaultView.id) return;
+
+		inactivityTimer = setTimeout(() => {
+			$currentViewId = defaultView.id;
+			inactivityTimer = null;
+		}, defaultView.default_timeout * 1000);
+	}
+
+	$: $currentViewId, $editMode, $modals, resetInactivityTimer();
 
 	$configuration = data?.configuration;
 	$dashboard = data?.dashboard;
@@ -188,7 +206,11 @@
 	}
 </script>
 
-<svelte:window on:keydown={handleKeydown} on:keyup={handleKeyup} />
+<svelte:window
+	on:keydown={handleKeydown}
+	on:keyup={handleKeyup}
+	on:pointerdown={resetInactivityTimer}
+/>
 
 <!-- theme -->
 <Theme initial={data?.theme} />
@@ -258,19 +280,30 @@
 			'aside nav'
 			'aside main';
 		min-height: 100vh;
+		min-height: 100dvh;
 		overflow: hidden;
 	}
 
-	@media (max-width: 768px) {
+	/* Small phones (< 480px) */
+	@media (max-width: 479px) {
 		#layout {
-			display: grid;
 			grid-template-areas:
 				'header header'
 				'aside aside'
 				'nav nav'
 				'main main';
-			min-height: 100vh;
-			overflow: hidden;
+			grid-template-rows: auto auto auto 1fr !important;
+		}
+	}
+
+	/* Phones and tablets portrait (480px – 768px) */
+	@media (min-width: 480px) and (max-width: 768px) {
+		#layout {
+			grid-template-areas:
+				'header header'
+				'aside aside'
+				'nav nav'
+				'main main';
 			grid-template-rows: auto auto auto 1fr !important;
 		}
 	}

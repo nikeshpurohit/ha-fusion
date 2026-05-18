@@ -8,6 +8,7 @@
 	export let math: string | undefined = undefined;
 	export let name: string | undefined = undefined;
 	export let id: number | undefined = undefined;
+	export let demo: number | undefined = undefined;
 
 	let entity: HassEntity;
 	let cache: { [id: number]: { [key: string]: number } } = {};
@@ -25,11 +26,9 @@
 		cache[id] = {};
 	}
 
-	$: if (entity) {
-		/**
-		 * Compute `expression`, first check if cached
-		 * value otherwise evaluate the math expression
-		 */
+	$: if (demo !== undefined) {
+		expression = demo;
+	} else if (entity) {
 		let key = `${state}_${math}`;
 		if (id && cache?.[id]?.[key]) {
 			expression = cache[id][key];
@@ -78,19 +77,21 @@
 </script>
 
 <div class="container">
-	<div class="header">
-		<div class="friendly-name overflow">{getName({ name }, entity)}</div>
-		<div class="state">
-			{Intl.NumberFormat($selectedLanguage, options).format(expression / 100)}
+	<div class="card">
+		<div class="header">
+			<div class="friendly-name overflow">{getName({ name }, entity)}</div>
+			<div class="state">
+				{Intl.NumberFormat($selectedLanguage, options).format(expression / 100)}
+			</div>
 		</div>
-	</div>
 
-	<div class="bar">
-		<div
-			class="fill"
-			style:transition={mounted ? `width ${$motion}ms ease` : 'none'}
-			style:width="{expression}%"
-		></div>
+		<div class="bar">
+			<div
+				class="fill"
+				style:transition={mounted ? `width ${$motion}ms ease` : 'none'}
+				style:width="{expression}%"
+			></div>
+		</div>
 	</div>
 </div>
 
@@ -100,32 +101,38 @@
 		text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 	}
 
+	.card {
+		background-color: rgba(0, 0, 0, 0.2);
+		border-radius: 0.6rem;
+		padding: 0.55rem 0.75rem;
+	}
+
 	.header {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 0.3em;
+		margin-bottom: 0.4rem;
 	}
 
 	.friendly-name {
 		overflow: hidden;
 		flex-grow: 1;
-		text-align: justify;
 	}
 
 	.state {
 		white-space: nowrap;
-		margin-left: 0.5em;
+		margin-left: 0.5rem;
+		opacity: 0.75;
 	}
 
 	.fill {
-		min-height: 0.5em;
-		background-color: rgb(255, 255, 255, 0.9);
+		min-height: 0.4rem;
+		background-color: rgb(255, 255, 255, 0.85);
 	}
 
 	.bar {
 		position: relative;
 		background-color: rgba(0, 0, 0, 0.3);
-		border-radius: 0.225rem;
+		border-radius: 0.2rem;
 		overflow: hidden;
 		width: 100%;
 	}
