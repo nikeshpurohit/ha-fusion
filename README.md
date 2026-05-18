@@ -1,54 +1,32 @@
 # Nova Domus
 
-A smart home dashboard built on [Home Assistant](https://www.home-assistant.io/). Designed to be fast, configurable, and opinionated about UX in a way that suits daily use on wall-mounted panels and tablets.
+A Home Assistant dashboard that actually feels like home.
 
-This project grew out of [ha-fusion](https://github.com/matt8707/ha-fusion) by [matt8707](https://github.com/matt8707). What started as a personal fork has evolved into something different enough to deserve its own name. Full credit for the original dashboard design and architecture goes to him — Nova Domus builds on top of that foundation.
+Built on the solid foundation of [ha-fusion](https://github.com/matt8707/ha-fusion) by [matt8707](https://github.com/matt8707), Nova Domus is what happens when you use a dashboard every single day and keep wanting it to do just one more thing. Three years of personal use, wall-mounted tablets, late-night tweaks, and the slow realization that the fork had become its own project.
 
 [![preview](/static/preview.png)](https://youtu.be/2jNCyvkyLD8)
 
 ---
 
-## Features
+## What's different
 
 ### AI Assistant
 
-A conversational assistant panel, powered by whatever AI agent you've configured in Home Assistant (Google, OpenAI, Anthropic — your choice). It knows about the entities on your dashboard and nothing else. Ask it what's on, tell it to turn things off, or just check the temperature in a room.
+Ask your dashboard something. Nova Domus includes a built-in chat panel connected to whichever AI agent you've configured in Home Assistant — Anthropic, Google, OpenAI, a local Ollama model, whatever. The assistant knows the entities on your dashboard and nothing else, which keeps it focused and stops it from inventing devices you don't have.
 
-Voice input and text-to-speech are supported where the browser allows it. No cloud dependency beyond what HA already manages — the dashboard just calls `conversation/process` over WebSocket.
+Voice input and text-to-speech work wherever the browser supports it. Everything routes through Home Assistant's `conversation/process` API — no extra cloud accounts, no API keys in the dashboard config.
 
-### Custom Panel item
+### Custom Panel
 
-A flexible tile that packs multiple widgets into a single dashboard slot. Rows can be mixed and reordered freely:
-
-| Row type | What it does |
-|----------|--------------|
-| **Camera** | Embeds a camera stream |
-| **Buttons** | Up to 4 action buttons per row |
-| **Sensor** | Shows a sensor value with optional prefix / suffix |
-| **Slider** | Controls a `light` or `number` entity |
-
-A "primary entity" can be pinned to the tile so its state is visible without opening the panel.
+Sometimes a single entity isn't enough for a tile. The Custom Panel lets you build a small panel inside one tile: a camera feed, a row of buttons, sensor readings, a brightness slider — mixed and stacked however makes sense for the room. A primary entity can be pinned to the tile face so the most important value is always visible without tapping to open anything.
 
 ### Default view with auto-return
 
-Mark any view as the default. After a configurable period of inactivity (no taps, no clicks), the dashboard silently returns to it. Useful on wall panels where you want the main floor plan visible most of the time, but still want to navigate away when needed. Modals pause the timer automatically.
+On a wall panel you want the main floor plan visible most of the time. Mark a view as the default and set a timeout — after that many seconds without interaction the dashboard quietly returns to it. Open a camera feed, walk away, come back to the floor plan. Modals hold the timer while they're open.
 
-### Bundled documentation
+### Everything else
 
-A **Docs** button in the toolbar opens a full bilingual (EN/IT) manual bundled with the app — no external link, no separate website. Covers installation, all item types, sidebar widgets, visibility conditions, Jinja2 templates, themes, custom CSS/JS, and more.
-
-### Other things worth knowing
-
-- **Lock with keypad** — numeric or text keypad based on `code_format`, same UX as the alarm panel
-- **`input_datetime` formatting** — displays a proper locale date/time instead of the raw HA state string
-- **Display-only buttons** — tiles that show state but don't respond to interaction (good for sensors styled as buttons)
-- **Light brightness drag** — horizontal swipe on an active light button adjusts brightness
-- **Custom CSS** — inject your own stylesheet via `data/custom_style.css`, editable from the Settings panel
-- **Template sidebar item with icon** — templates can now show an icon alongside their value
-- **Binary sensor sidebar item** — standalone binary sensor tile for the sidebar
-- **5 new built-in themes** — slate, ember, nord, sage, rose (all gradient-based)
-- **Vertical stacks** — complement the existing horizontal stacks for more flexible layouts
-- **Visibility conditions** — show or hide items based on entity state, time, or user
+The smaller things that I kept missing and eventually built: a numeric keypad for locks that need a code, `input_datetime` displayed as a real date instead of a raw string, display-only button tiles for read-only sensors, horizontal brightness drag on light tiles, custom CSS injected at runtime and editable in-app, binary sensor sidebar widget, template sidebar items with icons, five new gradient themes, vertical stacks, visibility conditions per item, and a full bilingual (EN/IT) manual bundled with the app — no external link required.
 
 ---
 
@@ -56,15 +34,11 @@ A **Docs** button in the toolbar opens a full bilingual (EN/IT) manual bundled w
 
 ### Home Assistant Add-on
 
-For OS or Supervised installations, Nova Domus is available as an add-on:
+The easiest way in if you're on HA OS or Supervised. Add the repository and install directly from the add-on store:
 
-1. Add the repository to your HA instance:
+[![Add add-on repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Famedello%2Faddon-ha-fusion)
 
-   [![Add add-on repository](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Famedello%2Faddon-ha-fusion)
-
-   Or add manually: `https://github.com/amedello/addon-ha-fusion`
-
-2. Refresh the add-on store and install **Nova Domus**.
+Or add manually: `https://github.com/amedello/addon-ha-fusion`
 
 ### Docker
 
@@ -75,8 +49,7 @@ docker compose up -d nova-domus
 **Update:**
 
 ```bash
-docker compose pull nova-domus
-docker compose up -d nova-domus
+docker compose pull nova-domus && docker compose up -d nova-domus
 ```
 
 <details>
@@ -94,7 +67,7 @@ docker run -d \
   ghcr.io/amedello/nova-domus
 ```
 
-> The `ghcr.io/amedello/ha-fusion` image tag still receives updates for backward compatibility.
+> Already running `ghcr.io/amedello/ha-fusion`? That tag still receives updates — no changes needed.
 
 </details>
 
@@ -102,10 +75,10 @@ docker run -d \
 
 ## Query strings
 
-| Parameter | Example | Effect |
-|-----------|---------|--------|
-| `view` | `?view=Living Room` | Load a specific view on startup |
-| `menu` | `?menu=false` | Hide the menu button (useful on kiosks) |
+| Parameter | Effect |
+|-----------|--------|
+| `?view=Name` | Load a specific view on startup |
+| `?menu=false` | Hide the menu button (useful on kiosk displays) |
 
 ---
 
@@ -113,7 +86,7 @@ docker run -d \
 
 | Key | Action |
 |-----|--------|
-| `f` | Filter entities |
+| `f` | Filter |
 | `Esc` | Exit / close |
 | `Cmd/Ctrl + S` | Save |
 | `Cmd/Ctrl + Z` | Undo |
@@ -124,35 +97,26 @@ docker run -d \
 ## Development
 
 ```bash
-# Prerequisites
-node + pnpm
-
-# Clone and install
 git clone https://github.com/amedello/ha-fusion.git
 cd ha-fusion
 pnpm install
 
-# Configure
-cp .env.example .env
-# Set HASS_URL to your HA instance
+cp .env.example .env   # set HASS_URL
 
-# Start dev server
-pnpm dev
-
-# Type check + lint
-pnpm check
-pnpm lint
-pnpm format
+pnpm dev       # dev server with HA proxy
+pnpm check     # type check
+pnpm lint      # eslint + prettier
+pnpm format    # auto-fix formatting
 ```
 
-The dev server proxies `/api/` and `/local/` to `HASS_URL`. Dashboard config lives in `data/dashboard.yaml`, app config in `data/configuration.yaml`.
+Dashboard config: `data/dashboard.yaml` — App config: `data/configuration.yaml`
 
 ---
 
 ## Debug
 
 ```bash
-docker logs nova-domus   # backend
+docker logs nova-domus   # backend errors
 # browser console for frontend
 ```
 
@@ -160,12 +124,12 @@ docker logs nova-domus   # backend
 
 ## Credits
 
-Nova Domus is built on [ha-fusion](https://github.com/matt8707/ha-fusion) by [matt8707](https://github.com/matt8707). The original dashboard design, architecture, and most entity integrations are his work. If you want a stable, upstream-maintained version, use his.
+Nova Domus stands on the work of [matt8707](https://github.com/matt8707/ha-fusion). The original dashboard design, architecture, and entity integrations are his. If you want a stable, upstream-maintained version, use his — it's great. This one just scratches different itches.
 
 ---
 
-## Support the project
+## Support
 
-If Nova Domus saves you time or a trip to the light switch:
+If Nova Domus saves you time, or just a few steps to the light switch:
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/amedello)
