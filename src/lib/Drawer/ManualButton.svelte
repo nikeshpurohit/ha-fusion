@@ -4,7 +4,7 @@
 	import { base } from '$app/paths';
 </script>
 
-<a class="button" href="{base}/ha-fusion-manual.html" target="_blank" rel="noopener noreferrer">
+<a class="button" href="{base}/nova-domus-manual.html" target="_blank" rel="noopener noreferrer">
 	<figure>
 		<Icon icon="solar:book-2-bold-duotone" height="none" />
 	</figure>
