@@ -16,13 +16,15 @@
 		disableMenuButton,
 		clickOriginatedFromMenu,
 		connection,
-		youtubeAddon
+		youtubeAddon,
+		states
 	} from '$lib/Stores';
 	import { authentication } from '$lib/Socket';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { modals } from 'svelte-modals';
+	import { modals, openModal } from 'svelte-modals';
 	import Theme from '$lib/Components/Theme.svelte';
+	import type { DoorbellItem } from '$lib/Types';
 
 	/**
 	 * Data from server-side load
@@ -49,6 +51,57 @@
 	}
 
 	$: $currentViewId, $editMode, $modals, resetInactivityTimer();
+
+	// doorbell auto-trigger queue
+	let doorbellQueue: DoorbellItem[] = [];
+	const doorbellTriggered = new Map<number, boolean>();
+	const doorbellQueueIds = new Set<number>();
+	let doorbellItems: DoorbellItem[] = [];
+
+	// recompute only when dashboard changes, not on every state update
+	$: {
+		doorbellItems = [];
+		for (const view of $dashboard?.views ?? []) {
+			for (const section of view.sections ?? []) {
+				for (const item of (section as any).items ?? []) {
+					if (item?.type === 'doorbell' && item?.trigger_entity) doorbellItems.push(item);
+				}
+				for (const nested of (section as any).sections ?? []) {
+					for (const item of nested?.items ?? []) {
+						if (item?.type === 'doorbell' && item?.trigger_entity) doorbellItems.push(item);
+					}
+				}
+			}
+		}
+		// clean up stale map entries when items are removed
+		const currentIds = new Set(doorbellItems.map((d) => d.id));
+		for (const id of doorbellTriggered.keys()) {
+			if (!currentIds.has(id)) doorbellTriggered.delete(id);
+		}
+	}
+
+	function processDoorbellQueue() {
+		if ($modals.length > 0 || doorbellQueue.length === 0 || $editMode) return;
+		const next = doorbellQueue[0];
+		doorbellQueue = doorbellQueue.slice(1);
+		doorbellQueueIds.delete(next.id);
+		openModal(() => import('$lib/Modal/DoorbellModal.svelte'), { sel: next, autoClose: true });
+	}
+
+	$: if ($states) {
+		for (const item of doorbellItems) {
+			const isOn = $states[item.trigger_entity!]?.state === 'on';
+			const wasOn = doorbellTriggered.get(item.id) ?? false;
+			if (isOn && !wasOn && !doorbellQueueIds.has(item.id)) {
+				doorbellQueue = [...doorbellQueue, item];
+				doorbellQueueIds.add(item.id);
+			}
+			doorbellTriggered.set(item.id, isOn);
+		}
+		processDoorbellQueue();
+	}
+
+	$: if ($modals.length === 0) processDoorbellQueue();
 
 	$configuration = data?.configuration;
 	$dashboard = data?.dashboard;

@@ -411,3 +411,14 @@ export interface CustomPanelItem {
 	rows?: ModalRow[];
 	primary_row_id?: number;
 }
+
+export interface DoorbellItem {
+	type: 'doorbell';
+	id: number;
+	name?: string;
+	camera_entity?: string;
+	action_entity?: string;
+	trigger_entity?: string;
+	trigger_timeout?: number;
+	stream?: boolean;
+}

@@ -94,6 +94,11 @@
 			id: 'conditional_media',
 			type: `${$lang('conditional')} ${$lang('media')?.toLocaleLowerCase()}`,
 			preview_icon: 'solar:tv-bold-duotone'
+		},
+		{
+			id: 'doorbell',
+			type: $lang('doorbell') || 'Doorbell',
+			preview_icon: 'mdi:doorbell'
 		}
 	];
 
@@ -140,6 +145,9 @@
 				break;
 			case 'empty':
 				openModal(() => import('$lib/Modal/EmptyConfig.svelte'), { sel });
+				break;
+			case 'doorbell':
+				openModal(() => import('$lib/Modal/DoorbellConfig.svelte'), { sel });
 				break;
 			default:
 				openModal(() => import('$lib/Modal/MainItemConfig.svelte'), { sel });

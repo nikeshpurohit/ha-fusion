@@ -1,16 +1,24 @@
 """ fetch.py """
 
 import os
+import sys
 import json
+import glob
 
 output = {}
 
-TRANSLATIONS = "/usr/local/lib/python3.12/site-packages/hass_frontend/static/translations"
+_paths = glob.glob('/usr/local/lib/python*/site-packages/hass_frontend/static/translations')
+if not _paths:
+    print("ERROR: hass_frontend translations not found", file=sys.stderr)
+    sys.exit(1)
+TRANSLATIONS = _paths[0]
 COMPONENTS = "/usr/src/homeassistant/homeassistant/components"
 
 
 def process_dir(_dir, _output, _keys):
     """func"""
+    if not os.path.isdir(_dir):
+        return
     for filename in os.listdir(_dir):
         if filename.endswith(".json") and not filename.startswith("test"):
             _code = filename.rsplit("-", 1)[0].replace(".json", "")
@@ -145,6 +153,7 @@ dir_keys = [
             ("show_area", ["ui.components.area-filter.show"]),
             ("open_door", ["ui.card.lock.open_door"]),
             ("open_door_success", ["ui.card.lock.open_door_success"]),
+            ("press", ["ui.card.button.press"]),
         ],
     ),
     (  # MEDIA_PLAYER
