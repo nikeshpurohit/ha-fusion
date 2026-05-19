@@ -306,6 +306,7 @@ section { margin-bottom: 1rem; }
       <li class="nav-group en">Interface</li>
       <li class="sub"><a href="#interface-overview" class="it">Panoramica</a><a href="#interface-overview" class="en">Overview</a></li>
       <li class="sub"><a href="#views" class="it">Viste</a><a href="#views" class="en">Views</a></li>
+      <li class="sub"><a href="#views-default" class="it">Vista di default</a><a href="#views-default" class="en">Default view</a></li>
       <li class="sub"><a href="#sections" class="it">Sezioni</a><a href="#sections" class="en">Sections</a></li>
 
       <li class="nav-group it">Elementi</li>
@@ -313,6 +314,8 @@ section { margin-bottom: 1rem; }
       <li class="sub"><a href="#item-button" class="it">Button</a><a href="#item-button" class="en">Button</a></li>
       <li class="sub"><a href="#item-camera" class="it">Camera</a><a href="#item-camera" class="en">Camera</a></li>
       <li class="sub"><a href="#item-custompanel">Custom Panel</a></li>
+      <li class="sub"><a href="#item-doorbell" class="it">Citofono</a><a href="#item-doorbell" class="en">Doorbell</a></li>
+      <li class="sub"><a href="#item-ai-assistant" class="it">Assistente AI</a><a href="#item-ai-assistant" class="en">AI Assistant</a></li>
       <li class="sub"><a href="#item-other" class="it">Altri tipi</a><a href="#item-other" class="en">Other types</a></li>
 
       <li class="nav-group it">Avanzato</li>
@@ -385,6 +388,8 @@ section { margin-bottom: 1rem; }
     <div class="feat-card"><div class="icon">🧩</div><div class="name it">Template Jinja2</div><div class="name en">Jinja2 Templates</div><div class="desc it">Personalizza stato, icona, colore e servizio con template HA</div><div class="desc en">Customise state, icon, colour and service with HA templates</div></div>
     <div class="feat-card"><div class="icon">👁️</div><div class="name it">Visibilità condizionale</div><div class="name en">Conditional visibility</div><div class="desc it">Mostra/nascondi sezioni e elementi in base a stati e condizioni</div><div class="desc en">Show/hide sections and items based on states and conditions</div></div>
     <div class="feat-card"><div class="icon">🎨</div><div class="name it">Temi & CSS</div><div class="name en">Themes & CSS</div><div class="desc it">8 temi integrati + editor CSS personalizzato in-app</div><div class="desc en">8 built-in themes + in-app custom CSS editor</div></div>
+    <div class="feat-card"><div class="icon">🔔</div><div class="name it">Citofono</div><div class="name en">Doorbell</div><div class="desc it">Tile video con auto-trigger e coda chiamate</div><div class="desc en">Video tile with auto-trigger and call queue</div></div>
+    <div class="feat-card"><div class="icon">🤖</div><div class="name it">Assistente AI</div><div class="name en">AI Assistant</div><div class="desc it">Chat e TTS con l'AI di Home Assistant, wake word</div><div class="desc en">Chat & TTS with Home Assistant AI, wake word</div></div>
     <div class="feat-card"><div class="icon">🖱️</div><div class="name">Drag & Drop</div><div class="desc it">Riordina viste, sezioni ed elementi trascinandoli</div><div class="desc en">Reorder views, sections and items by dragging</div></div>
     <div class="feat-card"><div class="icon">↩️</div><div class="name">Undo / Redo</div><div class="desc it">Cronologia completa delle modifiche con Cmd+Z</div><div class="desc en">Full change history with Cmd+Z</div></div>
   </div>
@@ -608,9 +613,42 @@ docker-compose up -d nova-domus</code></pre>
         <tr><td>name</td><td>string</td><td class="it">Nome visualizzato nella tab</td><td class="en">Name shown in the tab</td></tr>
         <tr><td>icon</td><td>string</td><td class="it">Icona MDI/Iconify (es. <code>mdi:home</code>)</td><td class="en">MDI/Iconify icon (e.g. <code>mdi:home</code>)</td></tr>
         <tr><td>sections</td><td>Section[]</td><td class="it">Array di sezioni nella vista</td><td class="en">Array of sections in the view</td></tr>
+        <tr><td>is_default</td><td>boolean</td><td class="it">Segna questa vista come vista di default per il rientro automatico <span class="badge badge-new">Nuovo</span></td><td class="en">Marks this view as the default for auto-return <span class="badge badge-new">New</span></td></tr>
+        <tr><td>default_timeout</td><td>number</td><td class="it">Secondi di inattività prima del rientro alla vista di default <span class="badge badge-new">Nuovo</span></td><td class="en">Seconds of inactivity before returning to the default view <span class="badge badge-new">New</span></td></tr>
       </tbody>
     </table>
   </div>
+</section>
+
+<!-- ══ VISTA DI DEFAULT ═══════════════════════════════════════ -->
+<section id="views-default">
+  <h2><span class="it">Vista di Default</span><span class="en">Default View</span> <span class="badge badge-new">Nuovo</span></h2>
+
+  <p class="it">È possibile designare una vista come <strong>vista di default</strong>: il dashboard ci ritorna automaticamente dopo un periodo di inattività dell'utente. Utile su tablet fissi (es. al muro) per riportare sempre la dashboard alla vista principale dopo un po' che nessuno la usa.</p>
+  <p class="en">You can designate one view as the <strong>default view</strong>: the dashboard automatically returns to it after a period of user inactivity. Useful on wall-mounted tablets to always bring the dashboard back to the main view when left unattended.</p>
+
+  <h3><span class="it">Come configurarlo</span><span class="en">How to configure</span></h3>
+  <p class="it">In modalità modifica, apri la configurazione di una vista (icona ingranaggio) e imposta:</p>
+  <p class="en">In edit mode, open a view's configuration (gear icon) and set:</p>
+  <ul>
+    <li class="it"><strong>Vista di default</strong> — abilita il flag <code>is_default: true</code> sulla vista.</li>
+    <li class="en"><strong>Default view</strong> — enables the <code>is_default: true</code> flag on the view.</li>
+    <li class="it"><strong>Rientro dopo (secondi)</strong> — imposta il timeout in secondi di inattività prima che il dashboard torni a questa vista (<code>default_timeout</code>).</li>
+    <li class="en"><strong>Return after (seconds)</strong> — sets the inactivity timeout in seconds before the dashboard returns to this view (<code>default_timeout</code>).</li>
+  </ul>
+
+  <div class="note">
+    <strong class="it">Nota</strong><strong class="en">Note</strong> — <span class="it">Il timer di inattività si resetta a ogni click, touch o apertura di modale. Non scatta mai se la vista corrente è già quella di default, se il dashboard è in modalità modifica, o se è aperta una finestra modale.</span><span class="en">The inactivity timer resets on every click, touch, or modal open. It never fires if the current view is already the default, if edit mode is active, or if a modal is open.</span>
+  </div>
+
+<pre><code><span class="cm"># in dashboard.yaml</span>
+<span class="key">views</span><span class="kw">:</span>
+  <span class="kw">-</span> <span class="key">id</span><span class="kw">:</span> <span class="val">1000000000001</span>
+    <span class="key">name</span><span class="kw">:</span> <span class="str">"Casa"</span>
+    <span class="key">icon</span><span class="kw">:</span> <span class="val">mdi:home</span>
+    <span class="key">is_default</span><span class="kw">:</span> <span class="kw">true</span>
+    <span class="key">default_timeout</span><span class="kw">:</span> <span class="val">120</span>  <span class="cm"># torna a questa vista dopo 2 minuti di inattività</span>
+    <span class="key">sections</span><span class="kw">:</span> <span class="cm"># …</span></code></pre>
 </section>
 
 <!-- ══ SEZIONI ════════════════════════════════════════════════ -->
@@ -924,6 +962,116 @@ docker-compose up -d nova-domus</code></pre>
   <span class="cm"># configurato interamente tramite UI</span></code></pre>
   <p class="it">La configurazione degli elementi grafici viene gestita completamente dall'editor visuale in modalità modifica. Include strumenti per spostare, ridimensionare, aggiungere testo e collegare entità agli elementi.</p>
   <p class="en">Graphic elements configuration is managed entirely by the visual editor in edit mode. Includes tools to move, resize, add text and link entities to elements.</p>
+</section>
+
+<!-- ══ CITOFONO / DOORBELL ════════════════════════════════════ -->
+<section id="item-doorbell">
+  <h2><span class="it">Citofono (Doorbell)</span><span class="en">Doorbell</span> <span class="badge badge-new">Nuovo</span></h2>
+
+  <p class="it">Il tipo <code>doorbell</code> è un tile grande (2×4) pensato per i videocitofoni: mostra il feed della telecamera in anteprima, apre una modale dedicata al suono del campanello con stream live e pulsante di azione (es. apri porta), e può attivarsi automaticamente quando un sensore binario rileva il campanello.</p>
+  <p class="en">The <code>doorbell</code> item is a large tile (2×4) designed for video intercoms: it shows the camera feed as a preview, opens a dedicated modal on ring with live stream and action button (e.g. open door), and can trigger automatically when a binary sensor detects the ring.</p>
+
+  <h3><span class="it">Esempio YAML</span><span class="en">YAML example</span></h3>
+<pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">doorbell</span>
+  <span class="key">id</span><span class="kw">:</span> <span class="val">9999999999010</span>
+  <span class="key">name</span><span class="kw">:</span> <span class="str">"Citofono"</span>
+  <span class="key">camera_entity</span><span class="kw">:</span> <span class="val">camera.ingresso</span>       <span class="cm"># telecamera da mostrare</span>
+  <span class="key">stream</span><span class="kw">:</span> <span class="kw">false</span>                          <span class="cm"># true = stream HLS/WebRTC live</span>
+  <span class="key">action_entity</span><span class="kw">:</span> <span class="val">lock.serratura_ingresso</span>  <span class="cm"># entità da attivare (lock, switch, cover…)</span>
+  <span class="key">trigger_entity</span><span class="kw">:</span> <span class="val">binary_sensor.campanello</span> <span class="cm"># sensore che rileva il suono</span>
+  <span class="key">trigger_timeout</span><span class="kw">:</span> <span class="val">30</span>                    <span class="cm"># chiude la modale dopo N secondi</span></code></pre>
+
+  <h3><span class="it">Parametri di configurazione</span><span class="en">Configuration fields</span></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th><span class="it">Campo</span><span class="en">Field</span></th><th><span class="it">Tipo</span><span class="en">Type</span></th><th><span class="it">Descrizione</span><span class="en">Description</span></th></tr></thead>
+      <tbody>
+        <tr><td>camera_entity</td><td>string</td><td class="it">Entità <code>camera.*</code> da mostrare nel tile e nella modale <span class="badge badge-opt">opt</span></td><td class="en"><code>camera.*</code> entity shown in tile and modal <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>stream</td><td>boolean</td><td class="it">Abilita stream live HLS/WebRTC nel tile (default: <code>false</code> = snapshot)</td><td class="en">Enable live HLS/WebRTC stream in the tile (default: <code>false</code> = snapshot)</td></tr>
+        <tr><td>action_entity</td><td>string</td><td class="it">Entità da azionare al click del pulsante in modale (<code>lock</code>, <code>switch</code>, <code>cover</code>, <code>button</code>…) <span class="badge badge-opt">opt</span></td><td class="en">Entity to activate when the modal button is clicked (<code>lock</code>, <code>switch</code>, <code>cover</code>, <code>button</code>…) <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>trigger_entity</td><td>string</td><td class="it">Sensore binario (<code>binary_sensor.*</code>) che apre automaticamente la modale quando passa a <code>on</code> <span class="badge badge-opt">opt</span></td><td class="en">Binary sensor (<code>binary_sensor.*</code>) that auto-opens the modal when it turns <code>on</code> <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>trigger_timeout</td><td>number</td><td class="it">Secondi dopo i quali la modale si chiude automaticamente (richiede <code>trigger_entity</code>)</td><td class="en">Seconds after which the modal closes automatically (requires <code>trigger_entity</code>)</td></tr>
+        <tr><td>name</td><td>string</td><td class="it">Nome del citofono mostrato nel tile e nella modale <span class="badge badge-opt">opt</span></td><td class="en">Doorbell name shown in tile and modal <span class="badge badge-opt">opt</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="it">Come funziona l'auto-trigger</span><span class="en">How auto-trigger works</span></h3>
+  <p class="it">Quando <code>trigger_entity</code> è configurato, Nova Domus monitora lo stato del sensore in tempo reale. Appena passa a <code>on</code>, la modale del citofono si apre automaticamente e inizia il conto alla rovescia (<code>trigger_timeout</code>). Se in quel momento è già aperta un'altra modale, la notifica del campanello entra in una <strong>coda</strong> e viene mostrata non appena la modale corrente viene chiusa. In questo modo non si perde mai un suono.</p>
+  <p class="en">When <code>trigger_entity</code> is configured, Nova Domus monitors the sensor state in real time. As soon as it turns <code>on</code>, the doorbell modal opens automatically and the countdown begins (<code>trigger_timeout</code>). If another modal is already open, the ring notification enters a <strong>queue</strong> and is displayed as soon as the current modal closes — so no ring is ever missed.</p>
+
+  <h3><span class="it">Azione del pulsante in modale</span><span class="en">Modal action button</span></h3>
+  <p class="it">Il pulsante di azione si adatta automaticamente al dominio di <code>action_entity</code>:</p>
+  <p class="en">The action button adapts automatically to the <code>action_entity</code> domain:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th><span class="it">Dominio</span><span class="en">Domain</span></th><th><span class="it">Azione</span><span class="en">Action</span></th><th><span class="it">Etichetta</span><span class="en">Label</span></th></tr></thead>
+      <tbody>
+        <tr><td>lock</td><td><code>lock.unlock</code></td><td class="it">Apri porta</td><td class="en">Open door</td></tr>
+        <tr><td>cover</td><td><code>cover.open_cover</code></td><td class="it">Apri</td><td class="en">Open</td></tr>
+        <tr><td>button / input_button</td><td><code>button.press</code></td><td class="it">Premi</td><td class="en">Press</td></tr>
+        <tr><td>switch / input_boolean</td><td><code>switch.turn_on</code></td><td class="it">Apri porta</td><td class="en">Open door</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ ASSISTENTE AI ═══════════════════════════════════════════ -->
+<section id="item-ai-assistant">
+  <h2><span class="it">Assistente AI</span><span class="en">AI Assistant</span> <span class="badge badge-new">Nuovo</span></h2>
+
+  <p class="it">Nova Domus integra un assistente conversazionale basato sull'<strong>AI di Home Assistant</strong> (Conversation API). Disponibile sia come <strong>tile</strong> nella griglia principale sia come <strong>widget nella sidebar</strong>, permette di controllare la casa a voce o tramite testo, ricevere risposte parlate (TTS) e opzionalmente usare una wake word per attivazione hands-free.</p>
+  <p class="en">Nova Domus integrates a conversational assistant powered by <strong>Home Assistant's AI</strong> (Conversation API). Available both as a <strong>tile</strong> in the main grid and as a <strong>sidebar widget</strong>, it lets you control the home by voice or text, receive spoken responses (TTS), and optionally use a wake word for hands-free activation.</p>
+
+  <h3><span class="it">Tile nella griglia</span><span class="en">Grid tile</span></h3>
+  <p class="it">Aggiunge un tile grande che apre la finestra di chat al click.</p>
+  <p class="en">Adds a large tile that opens the chat window on click.</p>
+<pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">ai_assistant</span>
+  <span class="key">id</span><span class="kw">:</span> <span class="val">9999999999020</span>
+  <span class="key">name</span><span class="kw">:</span> <span class="str">"Nova"</span>                    <span class="cm"># nome visualizzato sul tile</span>
+  <span class="key">agent_id</span><span class="kw">:</span> <span class="val">conversation.nova_agent</span> <span class="cm"># agente HA da usare</span>
+  <span class="key">tts</span><span class="kw">:</span> <span class="kw">false</span>                       <span class="cm"># true = risposta vocale TTS</span>
+  <span class="key">tts_auto</span><span class="kw">:</span> <span class="kw">false</span>                  <span class="cm"># true = TTS parte subito senza click</span>
+  <span class="key">tts_voice</span><span class="kw">:</span> <span class="str">"it-IT-ElsaNeural"</span>    <span class="cm"># voce TTS (dipende dal motore HA)</span>
+  <span class="key">wake_word</span><span class="kw">:</span> <span class="kw">false</span>                 <span class="cm"># true = attivazione con wake word</span></code></pre>
+
+  <h3><span class="it">Widget in sidebar</span><span class="en">Sidebar widget</span></h3>
+  <p class="it">Aggiunge l'assistente direttamente nella barra laterale, sempre visibile.</p>
+  <p class="en">Adds the assistant directly in the sidebar, always visible.</p>
+<pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">ai_assistant</span>
+  <span class="key">id</span><span class="kw">:</span> <span class="val">1234567890120</span>
+  <span class="key">agent_id</span><span class="kw">:</span> <span class="val">conversation.nova_agent</span>
+  <span class="key">tts</span><span class="kw">:</span> <span class="kw">true</span>
+  <span class="key">tts_voice</span><span class="kw">:</span> <span class="str">"it-IT-ElsaNeural"</span></code></pre>
+
+  <h3><span class="it">Parametri di configurazione</span><span class="en">Configuration fields</span></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th><span class="it">Campo</span><span class="en">Field</span></th><th><span class="it">Tipo</span><span class="en">Type</span></th><th><span class="it">Descrizione</span><span class="en">Description</span></th></tr></thead>
+      <tbody>
+        <tr><td>agent_id</td><td>string</td><td class="it">ID dell'agente conversazionale HA (es. <code>conversation.home_assistant</code>) <span class="badge badge-req">req</span></td><td class="en">HA conversation agent ID (e.g. <code>conversation.home_assistant</code>) <span class="badge badge-req">req</span></td></tr>
+        <tr><td>tts</td><td>boolean</td><td class="it">Abilita la risposta vocale tramite TTS di HA (default: <code>false</code>)</td><td class="en">Enable spoken response via HA TTS (default: <code>false</code>)</td></tr>
+        <tr><td>tts_auto</td><td>boolean</td><td class="it">Avvia la riproduzione TTS automaticamente senza attendere click (default: <code>false</code>)</td><td class="en">Start TTS playback automatically without waiting for a click (default: <code>false</code>)</td></tr>
+        <tr><td>tts_voice</td><td>string</td><td class="it">Voce TTS da usare (dipende dal motore installato in HA) <span class="badge badge-opt">opt</span></td><td class="en">TTS voice to use (depends on engine installed in HA) <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>wake_word</td><td>boolean</td><td class="it">Abilita il rilevamento della wake word per attivazione hands-free (default: <code>false</code>)</td><td class="en">Enable wake word detection for hands-free activation (default: <code>false</code>)</td></tr>
+        <tr><td>name</td><td>string</td><td class="it">Nome visualizzato nel tile <span class="badge badge-opt">opt</span></td><td class="en">Name displayed on the tile <span class="badge badge-opt">opt</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3><span class="it">Prerequisiti in Home Assistant</span><span class="en">Home Assistant prerequisites</span></h3>
+  <ul>
+    <li class="it">Un agente conversazionale configurato in HA (menu <em>Impostazioni → Assistenti vocali → Agenti</em>). Può essere l'agente integrato di HA o un'integrazione esterna come OpenAI, Anthropic, ecc.</li>
+    <li class="en">A conversation agent configured in HA (menu <em>Settings → Voice assistants → Agents</em>). This can be HA's built-in agent or an external integration such as OpenAI, Anthropic, etc.</li>
+    <li class="it">Per TTS: un motore TTS attivo in HA (es. <em>Google Cloud TTS</em>, <em>Microsoft Edge TTS</em>, <em>Piper</em>).</li>
+    <li class="en">For TTS: an active TTS engine in HA (e.g. <em>Google Cloud TTS</em>, <em>Microsoft Edge TTS</em>, <em>Piper</em>).</li>
+    <li class="it">Per wake word: accesso al microfono del browser (HTTPS o localhost) e un provider wake word in HA.</li>
+    <li class="en">For wake word: browser microphone access (HTTPS or localhost) and a wake word provider in HA.</li>
+  </ul>
+
+  <div class="tip">
+    <strong class="it">Suggerimento</strong><strong class="en">Tip</strong> — <span class="it">Per trovare l'<code>agent_id</code> corretto vai in <em>Strumenti per sviluppatori → Modelli</em> e valuta <code>{{ integration_entities('conversation') }}</code>, oppure cerca <code>conversation.*</code> tra le entità.</span><span class="en">To find the correct <code>agent_id</code>, go to <em>Developer Tools → Template</em> and evaluate <code>{{ integration_entities('conversation') }}</code>, or search for <code>conversation.*</code> entities.</span>
+  </div>
 </section>
 
 <!-- ══ TEMPLATE ══════════════════════════════════════════════ -->
@@ -1575,6 +1723,40 @@ docker logs nova-domus --tail 100 -f  <span class="cm"># segui in tempo reale</s
       </tbody>
     </table>
   </div>
+
+  <h3>Doorbell <span class="badge badge-new">Nuovo</span></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th><span class="it">Campo</span><span class="en">Field</span></th><th><span class="it">Tipo</span><span class="en">Type</span></th><th><span class="it">Descrizione</span><span class="en">Description</span></th></tr></thead>
+      <tbody>
+        <tr><td>type</td><td>string</td><td><code>"doorbell"</code></td></tr>
+        <tr><td>id</td><td>number</td><td class="it">Univoco obbligatorio</td><td class="en">Mandatory unique</td></tr>
+        <tr><td>name</td><td>string</td><td class="it">Nome citofono <span class="badge badge-opt">opt</span></td><td class="en">Doorbell name <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>camera_entity</td><td>string</td><td class="it">Entità <code>camera.*</code> <span class="badge badge-opt">opt</span></td><td class="en"><code>camera.*</code> entity <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>stream</td><td>boolean</td><td class="it">Stream live HLS/WebRTC (default: <code>false</code>)</td><td class="en">Live HLS/WebRTC stream (default: <code>false</code>)</td></tr>
+        <tr><td>action_entity</td><td>string</td><td class="it">Entità azionata dal pulsante in modale <span class="badge badge-opt">opt</span></td><td class="en">Entity triggered by the modal button <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>trigger_entity</td><td>string</td><td class="it"><code>binary_sensor.*</code> per auto-apertura <span class="badge badge-opt">opt</span></td><td class="en"><code>binary_sensor.*</code> for auto-open <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>trigger_timeout</td><td>number</td><td class="it">Secondi conto alla rovescia auto-chiusura modale</td><td class="en">Countdown seconds before modal auto-closes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>AI Assistant <span class="badge badge-new">Nuovo</span></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th><span class="it">Campo</span><span class="en">Field</span></th><th><span class="it">Tipo</span><span class="en">Type</span></th><th><span class="it">Descrizione</span><span class="en">Description</span></th></tr></thead>
+      <tbody>
+        <tr><td>type</td><td>string</td><td><code>"ai_assistant"</code></td></tr>
+        <tr><td>id</td><td>number</td><td class="it">Univoco obbligatorio</td><td class="en">Mandatory unique</td></tr>
+        <tr><td>name</td><td>string</td><td class="it">Nome sul tile <span class="badge badge-opt">opt</span></td><td class="en">Tile name <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>agent_id</td><td>string</td><td class="it">ID agente conversazionale HA <span class="badge badge-req">req</span></td><td class="en">HA conversation agent ID <span class="badge badge-req">req</span></td></tr>
+        <tr><td>tts</td><td>boolean</td><td class="it">Abilita risposta vocale TTS</td><td class="en">Enable TTS voice response</td></tr>
+        <tr><td>tts_auto</td><td>boolean</td><td class="it">Avvia TTS automaticamente</td><td class="en">Start TTS automatically</td></tr>
+        <tr><td>tts_voice</td><td>string</td><td class="it">Voce TTS <span class="badge badge-opt">opt</span></td><td class="en">TTS voice <span class="badge badge-opt">opt</span></td></tr>
+        <tr><td>wake_word</td><td>boolean</td><td class="it">Abilita wake word</td><td class="en">Enable wake word</td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <!-- ══ RIFERIMENTO YAML — SIDEBAR ══════════════════════════ -->
@@ -1602,6 +1784,7 @@ docker logs nova-domus --tail 100 -f  <span class="cm"># segui in tempo reale</s
         <tr><td>iframe</td><td><code>url</code>, <code>size</code> (CSS height)</td></tr>
         <tr><td>image</td><td><code>entity_id</code> oppure <code>url</code></td></tr>
         <tr><td>timer</td><td><code>entity_id</code> (timer.*)</td></tr>
+        <tr><td>ai_assistant <span class="badge badge-new">Nuovo</span></td><td><code>agent_id</code> (req), <code>tts</code> (bool), <code>tts_auto</code> (bool), <code>tts_voice</code>, <code>wake_word</code> (bool)</td></tr>
       </tbody>
     </table>
   </div>
