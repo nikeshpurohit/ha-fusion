@@ -2,31 +2,22 @@
 
 A Home Assistant dashboard that actually feels like home.
 
-Built on the solid foundation of [ha-fusion](https://github.com/matt8707/ha-fusion) by [matt8707](https://github.com/matt8707), Nova Domus is what happens when you use a dashboard every single day and keep wanting it to do just one more thing. Three years of personal use, wall-mounted tablets, late-night tweaks, and the slow realization that the fork had become its own project.
+Home Assistant is one of the most powerful home automation platforms available, and also one of the least inviting to look at. Nova Domus is the layer between HA and your wall tablet — fast, configurable, and built by someone who uses it every day and kept wanting it to do one more thing. It started as a fork of [ha-fusion](https://github.com/matt8707/ha-fusion) by [matt8707](https://github.com/matt8707) and grew into its own project over three years of daily use.
 
 [![preview](/static/preview.png)](https://youtu.be/2jNCyvkyLD8)
 
 ---
 
-## What's different
+## Why Nova Domus
 
-### AI Assistant
+**A dashboard that adapts to your home, not the other way around.**
+The kitchen tile doesn't have to be a single light switch. It can be the camera outside the door, the button that opens the gate, and the sensor that tells you if it's raining — all in one place because that's what makes sense in your kitchen. The Custom Panel lets you compose exactly that: rows of cameras, buttons, sensors, and sliders inside a single tile, shaped around how you actually move through your space. Every room is different; the dashboard should reflect that.
 
-Ask your dashboard something. Nova Domus includes a built-in chat panel connected to whichever AI agent you've configured in Home Assistant — Anthropic, Google, OpenAI, a local Ollama model, whatever. The assistant knows the entities on your dashboard and nothing else, which keeps it focused and stops it from inventing devices you don't have.
+**The simplest interface is sometimes no interface at all.**
+Nova Domus includes a built-in AI assistant connected to whichever agent you've already configured in Home Assistant — Anthropic, Google, OpenAI, a local Ollama model, anything HA supports. Ask it something, get an answer or an action. Voice input and spoken responses work wherever the browser allows it. Nothing extra to set up: it routes through Home Assistant's conversation API and stays within the boundaries of what HA already knows about your home.
 
-Voice input and text-to-speech work wherever the browser supports it. Everything routes through Home Assistant's `conversation/process` API — no extra cloud accounts, no API keys in the dashboard config.
-
-### Custom Panel
-
-Sometimes a single entity isn't enough for a tile. The Custom Panel lets you build a small panel inside one tile: a camera feed, a row of buttons, sensor readings, a brightness slider — mixed and stacked however makes sense for the room. A primary entity can be pinned to the tile face so the most important value is always visible without tapping to open anything.
-
-### Default view with auto-return
-
-On a wall panel you want the main floor plan visible most of the time. Mark a view as the default and set a timeout — after that many seconds without interaction the dashboard quietly returns to it. Open a camera feed, walk away, come back to the floor plan. Modals hold the timer while they're open.
-
-### Polish and documentation
-
-Along the way we fixed the small rough edges that had accumulated in the original fork — entity formatting, edge cases in modals, auth robustness, a handful of upstream bugs. And because a powerful dashboard is useless if you can't figure out how to use it, there's a full bilingual (EN/IT) manual bundled with the app and accessible with one tap from the toolbar.
+**Designed to run unattended.**
+On a wall panel, the dashboard should mostly take care of itself. When the doorbell rings, the camera feed opens automatically and a countdown gives you time to unlock the door before the modal closes on its own. When nobody's been near the panel for a few minutes, it returns to whatever view you've set as the default — the floor plan, the living room, whatever makes sense as the idle state. No taps required, no stale screens left open.
 
 ---
 
