@@ -17,6 +17,7 @@
         "@event-calendar/day-grid": "^3.6.1",
         "@event-calendar/list": "^3.6.1",
         "@iconify/svelte": "^4.0.2",
+        "@resvg/resvg-js": "^2.6.2",
         "@sveltejs/adapter-node": "^5.5.4",
         "@sveltejs/kit": "^2.59.1",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
