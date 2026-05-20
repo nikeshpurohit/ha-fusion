@@ -398,6 +398,7 @@
 	"version": "Version",
 	"vertical": "Vertical",
 	"vertical_stack": "Vertical stack",
+	"spacer": "Spacer column",
 	"visibility": "Visibility",
 	"visibility_explanation": "The card will be shown when ALL conditions below are fulfilled. If no conditions are set, the card will always be shown.",
 	"visible": "Visible",

@@ -320,8 +320,9 @@
 							data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							animate:flip={{ duration: $motion }}
 							style:overflow="hidden"
+							style:display={!$editMode && !stackSection?.items?.length && !stackSection?.spacer ? 'none' : ''}
 						>
-							<SectionHeader {view} section={stackSection} />
+							<SectionHeader {view} section={stackSection} canBeSpacer={true} />
 							<div
 								class="items"
 								data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
@@ -378,8 +379,9 @@
 							data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							animate:flip={{ duration: $motion }}
 							style:overflow="hidden"
+							style:display={!$editMode && !stackSection?.items?.length && !stackSection?.spacer ? 'none' : ''}
 						>
-							<SectionHeader {view} section={stackSection} />
+							<SectionHeader {view} section={stackSection} canBeSpacer={true} />
 							<div
 								class="items"
 								data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}

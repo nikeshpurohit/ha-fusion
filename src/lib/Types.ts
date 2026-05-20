@@ -43,6 +43,7 @@ export interface Section {
 	id?: number;
 	name?: string;
 	items?: Item[];
+	spacer?: boolean;
 	visibility?: {
 		conditions?: Condition[];
 	}[];
