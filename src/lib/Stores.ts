@@ -7,7 +7,8 @@ import type {
 	Translations,
 	Views,
 	KonvaStore,
-	KonvaImageCache
+	KonvaImageCache,
+	AiMessage
 } from '$lib/Types';
 import type {
 	Connection,
@@ -29,6 +30,12 @@ export const configuration = writable<Configuration>();
 export const dashboard = writable<Dashboard>();
 export const customJs = writable<boolean | undefined>();
 export const customCss = writable<boolean | undefined>();
+
+// ai assistant
+export const aiConversation = writable<{ messages: AiMessage[]; conversationId: string | null }>({
+	messages: [],
+	conversationId: null
+});
 
 // states
 export const onStates = readable([

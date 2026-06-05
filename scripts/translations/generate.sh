@@ -1,7 +1,7 @@
 #!/bin/bash
 
-remote="ssh server@192.168.1.109 -p 55"
+remote="ssh server@100.95.107.106"
 path="$(dirname "$(readlink -f "$0")")"
 
-$remote "/usr/local/bin/docker exec -i homeassistant bash -c 'python3'" < "$path/fetch.py" | \
-python3 "$path/split.py" "$path/../../static/translations/"
+$remote "docker exec -i home-assistant bash -c 'python3'" < "$path/fetch.py" | \
+python "$path/split.py" "$path/../../static/translations/"

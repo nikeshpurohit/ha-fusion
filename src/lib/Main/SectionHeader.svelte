@@ -4,11 +4,13 @@
 	import DeleteButton from '$lib/Main/DeleteButton.svelte';
 	import VisibilitySectionButton from '$lib/Main/VisibilitySectionButton.svelte';
 	import VisibilityItemTemplateButton from '$lib/Main/VisibilityItemTemplateButton.svelte';
+	import SpacerSectionButton from '$lib/Main/SpacerSectionButton.svelte';
 	import SectionTitle from '$lib/Main/SectionTitle.svelte';
 	import { slide } from 'svelte/transition';
 
 	export let view: any;
 	export let section: any;
+	export let canBeSpacer = false;
 </script>
 
 {#if section?.name !== '' || $editMode}
@@ -26,6 +28,10 @@
 		{#if $editMode}
 			<div class="right">
 				<DragIndicator />
+
+				{#if canBeSpacer}
+					<SpacerSectionButton {section} />
+				{/if}
 
 				<VisibilityItemTemplateButton {section} />
 

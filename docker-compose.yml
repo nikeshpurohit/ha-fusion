@@ -1,7 +1,7 @@
 services:
-  ha-fusion:
-    container_name: ha-fusion
-    image: ghcr.io/amedello/ha-fusion
+  nova-domus:
+    container_name: nova-domus
+    image: ghcr.io/amedello/nova-domus
     volumes:
       - /path/to/ha-fusion:/app/data
     network_mode: bridge

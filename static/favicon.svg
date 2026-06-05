@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .house { fill: #1e2228; }
+    .star  { fill: #f5c842; }
+    @media (prefers-color-scheme: dark) {
+      .house { fill: #e2e8f0; }
+    }
+  </style>
+  <!-- house silhouette -->
+  <path class="house" d="M16,10 L27,20 L27,30 L5,30 L5,20 Z"/>
+  <!-- 4-pointed star (nova) above the roof peak -->
+  <path class="star" d="M16,1 L17,3.5 L19.5,4.5 L17,5.5 L16,8 L15,5.5 L12.5,4.5 L15,3.5 Z"/>
+</svg>

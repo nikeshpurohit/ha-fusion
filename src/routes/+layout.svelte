@@ -8,8 +8,8 @@
 </script>
 
 <svelte:head>
-	<title>FUSION</title>
-	<meta name="description" content="fusion" />
+	<title>Nova Domus</title>
+	<meta name="description" content="Nova Domus — Home Assistant dashboard" />
 	<meta charset="utf-8" />
 </svelte:head>
 

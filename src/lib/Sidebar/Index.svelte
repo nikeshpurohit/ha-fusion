@@ -16,7 +16,9 @@
 	let importedComponents: (string | undefined)[] = [];
 	let mountedComponents = false;
 
+	let AiAssistant: ComponentType;
 	let Bar: ComponentType;
+	let BinarySensor: ComponentType;
 	let Camera: ComponentType;
 	let Configure: ComponentType;
 	let Date: ComponentType;
@@ -36,7 +38,11 @@
 	let WeatherForecast: ComponentType;
 
 	const imports = {
+		ai_assistant: () =>
+			import('$lib/Sidebar/AiAssistant.svelte').then((c) => (AiAssistant = c.default)),
 		bar: () => import('$lib/Sidebar/Bar.svelte').then((c) => (Bar = c.default)),
+		binary_sensor: () =>
+			import('$lib/Sidebar/BinarySensor.svelte').then((c) => (BinarySensor = c.default)),
 		camera: () => import('$lib/Sidebar/Camera.svelte').then((c) => (Camera = c.default)),
 		configure: () => import('$lib/Sidebar/Configure.svelte').then((c) => (Configure = c.default)),
 		date: () => import('$lib/Sidebar/Date.svelte').then((c) => (Date = c.default)),
@@ -99,7 +105,11 @@
 		const sel = getSelected(selectedId, $dashboard) as SidebarItem;
 
 		if ($editMode && sel) {
-			if (sel?.type === 'bar') {
+			if (sel?.type === 'ai_assistant') {
+				openModal(() => import('$lib/Modal/AiAssistantConfig.svelte'), { sel });
+			} else if (sel?.type === 'binary_sensor') {
+				openModal(() => import('$lib/Modal/BinarySensorConfig.svelte'), { sel });
+			} else if (sel?.type === 'bar') {
 				openModal(() => import('$lib/Modal/BarConfig.svelte'), { sel });
 			} else if (sel?.type === 'camera') {
 				openModal(() => import('$lib/Modal/CameraConfig.svelte'), { sel });
@@ -145,7 +155,9 @@
 			}
 		} else {
 			// !$editMode modals
-			if (sel?.type === 'camera') {
+			if (sel?.type === 'ai_assistant') {
+				openModal(() => import('$lib/Modal/AiAssistantModal.svelte'), { sel });
+			} else if (sel?.type === 'camera') {
 				openModal(() => import('$lib/Modal/CameraModal.svelte'), { sel });
 			} else if (sel?.type === 'timer') {
 				openModal(() => import('$lib/Modal/TimerModal.svelte'), { sel });
@@ -262,8 +274,32 @@
 						? 'flex'
 						: 'initial'}
 				>
-					<!-- BAR -->
-					{#if Bar && item?.type === 'bar' && !hide_mobile}
+					<!-- AI ASSISTANT -->
+					{#if AiAssistant && item?.type === 'ai_assistant' && !hide_mobile}
+						<button on:click={() => handleClick(item?.id)}>
+							<svelte:component this={AiAssistant} sel={item} />
+						</button>
+
+						<!-- BINARY SENSOR -->
+					{:else if BinarySensor && item?.type === 'binary_sensor' && !hide_mobile}
+						<div on:click={() => handleClick(item?.id)} on:keydown role="button" tabindex="0">
+							<svelte:component
+								this={BinarySensor}
+								entity_id={item?.entity_id}
+								name={item?.name}
+								prefix={item?.prefix}
+								suffix={item?.suffix}
+								on_value={item?.on_value}
+								off_value={item?.off_value}
+								icon_on={item?.icon_on}
+								icon_off={item?.icon_off}
+								color_on={item?.color_on}
+								color_off={item?.color_off}
+							/>
+						</div>
+
+						<!-- BAR -->
+					{:else if Bar && item?.type === 'bar' && !hide_mobile}
 						<button on:click={() => handleClick(item?.id)}>
 							<svelte:component
 								this={Bar}
@@ -463,5 +499,35 @@
 	.sidebar_edit_mode {
 		transition: height 200ms ease;
 		display: flex;
+	}
+
+	/* Small phones (< 480px) */
+	@media (max-width: 479px) {
+		aside {
+			--theme-sidebar-padding: 0 0.6rem;
+			--theme-sidebar-item-padding: 0.4rem 0.5rem;
+			--theme-sidebar-font-size: 0.88rem;
+			--theme-sizes-sidebar-time: 2.8rem;
+		}
+	}
+
+	/* FHD monitors (1366px – 1919px) */
+	@media (min-width: 1366px) and (max-width: 1919px) {
+		aside {
+			--theme-sidebar-padding: 0 1.6rem;
+			--theme-sidebar-item-padding: 0.65rem 0.7rem;
+			--theme-sidebar-font-size: 1.05rem;
+			--theme-sizes-sidebar-time: 3.6rem;
+		}
+	}
+
+	/* QHD / 4K displays (≥ 1920px) */
+	@media (min-width: 1920px) {
+		aside {
+			--theme-sidebar-padding: 0 2rem;
+			--theme-sidebar-item-padding: 0.75rem 0.85rem;
+			--theme-sidebar-font-size: 1.15rem;
+			--theme-sizes-sidebar-time: 4.2rem;
+		}
 	}
 </style>

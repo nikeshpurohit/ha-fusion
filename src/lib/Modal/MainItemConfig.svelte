@@ -7,16 +7,7 @@
 	import { flip } from 'svelte/animate';
 	import InputClear from '$lib/Components/InputClear.svelte';
 	import Modal from '$lib/Modal/Index.svelte';
-	import {
-		getCameraEntity,
-		getSensorEntity,
-		getMediaPlayerEntity
-	} from '$lib/Modal/getRandomEntity';
-
-	import Button from '$lib/Main/Button.svelte';
-	import Camera from '$lib/Main/Camera.svelte';
-	import ConditionalMedia from '$lib/Main/ConditionalMedia.svelte';
-	import Empty from '$lib/Main/Empty.svelte';
+	import { getCameraEntity, getSensorEntity } from '$lib/Modal/getRandomEntity';
 	import ConfigButtons from '$lib/Modal/ConfigButtons.svelte';
 	import Ripple from 'svelte-ripple';
 	import Icon from '@iconify/svelte';
@@ -30,7 +21,6 @@
 	// get random preview entities
 	if (!$demo.camera) $demo.camera = getCameraEntity($states);
 	if (!$demo.sensor) $demo.sensor = getSensorEntity($states);
-	if (!$demo.media_player) $demo.media_player = getMediaPlayerEntity($states);
 
 	let loadIcons: (typeof import('@iconify/svelte'))['loadIcons'];
 	let icons: Record<string, string>;
@@ -72,9 +62,6 @@
 	let itemTypes: {
 		id: string;
 		type: string;
-		component?: any;
-		props?: any;
-		style?: any;
 		preview_icon?: string;
 	}[];
 
@@ -82,32 +69,16 @@
 		{
 			id: 'button',
 			type: $lang('button'),
-			component: Button,
-			props: {
-				demo: $demo.sensor,
-				sel
-			}
+			preview_icon: 'mdi:lightbulb-outline'
 		},
 		{
 			id: 'custom_panel',
-			type: $lang('custom_panel') || 'Custom Panel',
-			component: Button,
-			props: {
-				demo: undefined,
-				sel
-			}
+			type: $lang('custom_panel') || 'Custom Panel'
 		},
 		{
 			id: 'camera',
 			type: $lang('camera'),
-			component: Camera,
-			props: {
-				demo: $demo.camera,
-				sel,
-				responsive: true,
-				controls: false,
-				muted: true
-			}
+			preview_icon: 'mdi:camera-outline'
 		},
 		{
 			id: 'picture_elements',
@@ -117,20 +88,17 @@
 		{
 			id: 'empty',
 			type: $lang('empty'),
-			component: Empty,
-			props: {
-				sel
-			}
+			preview_icon: 'mdi:rectangle-outline'
 		},
 		{
 			id: 'conditional_media',
 			type: `${$lang('conditional')} ${$lang('media')?.toLocaleLowerCase()}`,
-			component: $demo.media_player ? ConditionalMedia : undefined,
-			preview_icon: 'solar:tv-bold-duotone',
-			props: {
-				demo: $demo.media_player,
-				sel
-			}
+			preview_icon: 'solar:tv-bold-duotone'
+		},
+		{
+			id: 'doorbell',
+			type: $lang('doorbell') || 'Doorbell',
+			preview_icon: 'mdi:doorbell'
 		}
 	];
 
@@ -177,6 +145,9 @@
 				break;
 			case 'empty':
 				openModal(() => import('$lib/Modal/EmptyConfig.svelte'), { sel });
+				break;
+			case 'doorbell':
+				openModal(() => import('$lib/Modal/DoorbellConfig.svelte'), { sel });
 				break;
 			default:
 				openModal(() => import('$lib/Modal/MainItemConfig.svelte'), { sel });
@@ -229,26 +200,27 @@
 		</div>
 
 		<div class="container">
-			{#each filter as { id, type, component, props, style, preview_icon } (id)}
+			{#each filter as { id, type, preview_icon } (id)}
 				<button
 					on:click={() => handleClick(id)}
 					animate:flip={{ duration: $motion }}
-					style:text-align={style?.['text-align'] || 'start'}
 					use:Ripple={$ripple}
 				>
-					<div class="header">
-						{type}
-					</div>
-
-					<div class="preview" class:camera={id === 'camera'} class:button={id === 'button'}>
-						{#if component}
-							<svelte:component this={component} {...props} />
+					<div class="preview">
+						{#if id === 'custom_panel'}
+							<div class="cp-preview">
+								<div class="cp-icon">
+									<Icon icon="mdi:view-dashboard-edit" height="none" />
+								</div>
+								<span>Custom Panel</span>
+							</div>
 						{:else if preview_icon}
 							<div class="preview-icon">
 								<Icon icon={preview_icon} height="none" />
 							</div>
 						{/if}
 					</div>
+					<div class="footer">{type}</div>
 				</button>
 			{/each}
 		</div>
@@ -258,63 +230,140 @@
 {/if}
 
 <style>
-	.camera {
-		padding: 1rem 1.2rem;
-		height: inherit;
-	}
-
-	.button {
-		display: flex;
-		align-self: start;
-		min-width: 14.5rem;
-	}
-
 	.container {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-		grid-gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+		gap: 0.75rem;
 		overflow: auto;
 		align-content: start;
 	}
 
 	button {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		padding: 0;
 		font-family: inherit;
 		cursor: pointer;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 0.8em;
-		background-color: rgba(0, 0, 0, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 0.8rem;
+		background-color: rgba(255, 255, 255, 0.04);
 		height: 10rem;
 		outline-offset: -2px;
+		overflow: hidden;
+		transition:
+			border-color 150ms ease,
+			background-color 150ms ease;
 	}
 
-	.header {
-		background-color: rgba(0, 0, 0, 0.2);
-		padding: 0.8em 1em 0.7em 1em;
-		color: white;
-		font-weight: 500;
-		display: inline-flex;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-		font-size: 1rem;
-		height: min-content;
+	button:hover {
+		border-color: rgba(255, 255, 255, 0.22);
+		background-color: rgba(255, 255, 255, 0.07);
 	}
 
 	.preview {
+		flex: 1;
 		color: white;
-		padding: 0 1.5rem;
+		padding: 0 1.2rem;
 		min-width: -webkit-fill-available;
 		display: flex;
 		align-items: center;
+		min-height: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	.cp-preview {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		width: 100%;
+	}
+
+	.cp-icon {
+		width: 2.4rem;
+		height: 2.4rem;
+		background-color: rgba(0, 0, 0, 0.25);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.5rem;
+		flex-shrink: 0;
+		opacity: 0.7;
+	}
+
+	.cp-preview span {
+		font-size: 0.95rem;
+		font-weight: 500;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		opacity: 0.7;
+	}
+
+	.footer {
+		padding: 0.45rem 0.9rem 0.5rem;
+		color: rgba(255, 255, 255, 0.45);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: left;
 	}
 
 	.preview-icon {
-		width: 3.5rem;
-		opacity: 0.4;
+		width: 3rem;
+		opacity: 0.35;
 		margin: auto;
 	}
 
 	.search {
 		margin: 1rem 0;
+	}
+
+	/* Large phones / phablets (480px – 767px) */
+	@media (min-width: 480px) and (max-width: 767px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+		}
+	}
+
+	/* Tablets (768px – 1023px) */
+	@media (min-width: 768px) and (max-width: 1023px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+		}
+
+		button {
+			height: 10.5rem;
+		}
+	}
+
+	/* FHD monitors (1366px – 1919px) */
+	@media (min-width: 1366px) and (max-width: 1919px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+			gap: 0.9rem;
+		}
+
+		button {
+			height: 11rem;
+		}
+	}
+
+	/* QHD / 4K (≥ 1920px) */
+	@media (min-width: 1920px) {
+		.container {
+			grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+			gap: 1.1rem;
+		}
+
+		button {
+			height: 12.5rem;
+		}
 	}
 </style>

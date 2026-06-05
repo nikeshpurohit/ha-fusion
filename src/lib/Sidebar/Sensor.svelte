@@ -7,6 +7,7 @@
 	export let prefix: string | undefined = undefined;
 	export let suffix: string | undefined = undefined;
 	export let date: boolean | undefined = undefined;
+	export let demo: string | undefined = undefined;
 
 	let entity: HassEntity;
 
@@ -25,7 +26,11 @@
 	style:transition="grid-template-rows {$motion}ms ease, padding {$motion}ms ease"
 >
 	<div class="expandable">
-		{#if ['unavailable', 'unknown'].includes(state)}
+		{#if demo}
+			{prefix || ''}{@html demo}{suffix || ''}
+
+			<!-- unavailable / unknown -->
+		{:else if ['unavailable', 'unknown'].includes(state)}
 			{prefix || ''}{$lang(state)}{suffix || ''}
 
 			<!-- relative time -->

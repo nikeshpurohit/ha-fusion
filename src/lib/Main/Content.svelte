@@ -7,11 +7,12 @@
 	import Configure from '$lib/Main/Configure.svelte';
 	import Empty from '$lib/Main/Empty.svelte';
 	import CustomPanel from '$lib/Main/CustomPanel.svelte';
+	import Doorbell from '$lib/Main/Doorbell.svelte';
 
 	export let item: any;
 	export let sectionName: string | undefined = undefined;
 
-	const large = ['conditional_media', 'picture_elements', 'camera'];
+	const large = ['conditional_media', 'picture_elements', 'camera', 'doorbell'];
 </script>
 
 {#if item?.[SHADOW_ITEM_MARKER_PROPERTY_NAME] && large.includes(item?.type)}
@@ -32,6 +33,8 @@
 	<Empty sel={item} />
 {:else if item?.type === 'custom_panel'}
 	<CustomPanel sel={item} />
+{:else if item?.type === 'doorbell'}
+	<Doorbell sel={item} />
 {:else}
 	<!-- if types are changed internally, don't break ui -->
 	<Configure sel={{ id: item?.id }} />

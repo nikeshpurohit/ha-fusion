@@ -2,6 +2,46 @@ import type { HassEntity } from 'home-assistant-js-websocket';
 import type { Dashboard, Section } from '$lib/Types';
 
 /**
+ * Converts a ha-fusion locale code (e.g. 'it') to a BCP 47 speech tag
+ * required by SpeechRecognition and SpeechSynthesis (e.g. 'it-IT').
+ */
+export function toSpeechLang(locale: string | undefined): string {
+	if (!locale) return 'en-US';
+	const overrides: Record<string, string> = {
+		en: 'en-US',
+		zh: 'zh-CN',
+		'zh-Hans': 'zh-CN',
+		'zh-Hant': 'zh-TW',
+		'es-419': 'es-MX',
+		nb: 'nb-NO',
+		nn: 'nn-NO',
+		gsw: 'de-CH',
+		'sr-Latn': 'sr-Latn-RS'
+	};
+	if (overrides[locale]) return overrides[locale];
+	if (locale.includes('-')) return locale;
+	return `${locale}-${locale.toUpperCase()}`;
+}
+
+export function getAllEntityIds(dashboard: Dashboard): string[] {
+	const ids = new Set<string>();
+
+	function collectFromSection(section: Section) {
+		section.items?.forEach((item) => {
+			if (item.entity_id) ids.add(item.entity_id);
+		});
+		section.sections?.forEach(collectFromSection);
+	}
+
+	dashboard.views?.forEach((view) => view.sections?.forEach(collectFromSection));
+	dashboard.sidebar?.forEach((item) => {
+		if (item.entity_id) ids.add(item.entity_id);
+	});
+
+	return [...ids];
+}
+
+/**
  * Updates a selected object's property based on the event or direct value.
  * If no value is provided, the specified property is deleted from the object.
  */

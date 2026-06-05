@@ -320,8 +320,9 @@
 							data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							animate:flip={{ duration: $motion }}
 							style:overflow="hidden"
+							style:display={!$editMode && !stackSection?.items?.length && !stackSection?.spacer ? 'none' : ''}
 						>
-							<SectionHeader {view} section={stackSection} />
+							<SectionHeader {view} section={stackSection} canBeSpacer={true} />
 							<div
 								class="items"
 								data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
@@ -378,8 +379,9 @@
 							data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
 							animate:flip={{ duration: $motion }}
 							style:overflow="hidden"
+							style:display={!$editMode && !stackSection?.items?.length && !stackSection?.spacer ? 'none' : ''}
 						>
-							<SectionHeader {view} section={stackSection} />
+							<SectionHeader {view} section={stackSection} canBeSpacer={true} />
 							<div
 								class="items"
 								data-is-dnd-shadow-item-hint={stackSection?.[SHADOW_ITEM_MARKER_PROPERTY_NAME]}
@@ -527,10 +529,30 @@
 		border-radius: 0.65rem;
 	}
 
-	/* Phone and Tablet (portrait) */
-	@media all and (max-width: 768px) {
+	/* Small phones (< 480px) */
+	@media (max-width: 479px) {
 		main {
-			padding: 0 1.25rem 1.25rem 1.25rem;
+			padding: 0 0.75rem 0.75rem;
+			gap: 0.75rem;
+		}
+
+		.horizontal-stack {
+			grid-auto-flow: row;
+			gap: 1rem;
+		}
+
+		.items {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.3rem;
+		}
+	}
+
+	/* Phones and tablets portrait (480px – 768px) */
+	@media (min-width: 480px) and (max-width: 768px) {
+		main {
+			padding: 0 1.25rem 1.25rem;
+			gap: 1.25rem;
 		}
 
 		.horizontal-stack {
@@ -541,6 +563,44 @@
 		.items {
 			display: flex;
 			flex-wrap: wrap;
+		}
+	}
+
+	/* FHD monitors (1366px – 1919px) */
+	@media (min-width: 1366px) and (max-width: 1919px) {
+		main {
+			padding: 0 2.5rem 2.5rem;
+			gap: 2rem;
+		}
+
+		.items {
+			grid-template-columns: repeat(auto-fill, 15.5rem);
+			gap: 0.5rem;
+		}
+
+		.horizontal-stack {
+			gap: 2.5rem;
+		}
+	}
+
+	/* QHD / 4K displays (≥ 1920px) */
+	@media (min-width: 1920px) {
+		main {
+			padding: 0 4rem 4rem;
+			gap: 2.5rem;
+		}
+
+		.items {
+			grid-template-columns: repeat(auto-fill, 17.5rem);
+			gap: 0.65rem;
+		}
+
+		.horizontal-stack {
+			gap: 3rem;
+		}
+
+		.vertical-stack {
+			gap: 2rem;
 		}
 	}
 
