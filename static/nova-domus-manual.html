@@ -1391,6 +1391,33 @@ docker-compose up -d nova-domus</code></pre>
 <pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">timer</span>
   <span class="key">id</span><span class="kw">:</span> <span class="val">1234567890115</span>
   <span class="key">entity_id</span><span class="kw">:</span> <span class="val">timer.cottura</span></code></pre>
+
+  <h3>Binary Sensor <span class="badge badge-new">Nuovo</span></h3>
+  <p class="it">Mostra lo stato di un sensore binario (<code>binary_sensor.*</code>) con icona e testo personalizzabili per i due stati. Riconosce automaticamente la <code>device_class</code> dell'entità per scegliere l'icona appropriata.</p>
+  <p class="en">Shows the state of a binary sensor (<code>binary_sensor.*</code>) with customisable icon and text for each state. Automatically recognises the entity's <code>device_class</code> to choose the appropriate icon.</p>
+<pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">binary_sensor</span>
+  <span class="key">id</span><span class="kw">:</span> <span class="val">1234567890116</span>
+  <span class="key">entity_id</span><span class="kw">:</span> <span class="val">binary_sensor.porta_ingresso_contact</span>
+  <span class="key">name</span><span class="kw">:</span> <span class="str">"Porta Ingresso"</span>     <span class="cm"># sovrascrive il nome HA</span>
+  <span class="key">on_value</span><span class="kw">:</span> <span class="str">"Aperta"</span>           <span class="cm"># testo quando state = on</span>
+  <span class="key">off_value</span><span class="kw">:</span> <span class="str">"Chiusa"</span>          <span class="cm"># testo quando state = off</span>
+  <span class="key">icon_on</span><span class="kw">:</span> <span class="val">mdi:door-open</span>      <span class="cm"># icona quando on (opt)</span>
+  <span class="key">icon_off</span><span class="kw">:</span> <span class="val">mdi:door-closed</span>   <span class="cm"># icona quando off (opt)</span>
+  <span class="key">color_on</span><span class="kw">:</span> <span class="str">"#ff6b35"</span>          <span class="cm"># colore icona quando on (opt)</span>
+  <span class="key">color_off</span><span class="kw">:</span> <span class="str">"#58a6ff"</span>         <span class="cm"># colore icona quando off (opt)</span>
+  <span class="key">prefix</span><span class="kw">:</span> <span class="str">""</span>                   <span class="cm"># testo prima del valore (opt)</span>
+  <span class="key">suffix</span><span class="kw">:</span> <span class="str">""</span>                   <span class="cm"># testo dopo il valore (opt)</span></code></pre>
+  <p class="it">Se <code>on_value</code>/<code>off_value</code> non sono specificati, usa le traduzioni HA standard ("Aperto"/"Chiuso", "Rilevato"/"Non rilevato", ecc.) in base alla <code>device_class</code>. Se <code>icon_on</code>/<code>icon_off</code> non sono specificati, l'icona viene scelta automaticamente dalla <code>device_class</code> dell'entità.</p>
+  <p class="en">If <code>on_value</code>/<code>off_value</code> are not set, uses standard HA translations ("Open"/"Closed", "Detected"/"Not detected", etc.) based on <code>device_class</code>. If <code>icon_on</code>/<code>icon_off</code> are not set, the icon is chosen automatically from the entity's <code>device_class</code>.</p>
+
+  <h3>AI Assistant <span class="badge badge-new">Nuovo</span></h3>
+  <p class="it">Aggiunge il pannello dell'assistente AI direttamente nella sidebar, sempre visibile senza aprire modali. Stessa configurazione del tile nella griglia — vedi la sezione <a href="#item-ai-assistant">Assistente AI</a> per i dettagli.</p>
+  <p class="en">Adds the AI assistant panel directly in the sidebar, always visible without opening any modal. Same configuration as the grid tile — see the <a href="#item-ai-assistant">AI Assistant</a> section for details.</p>
+<pre><code><span class="kw">-</span> <span class="key">type</span><span class="kw">:</span> <span class="val">ai_assistant</span>
+  <span class="key">id</span><span class="kw">:</span> <span class="val">1234567890117</span>
+  <span class="key">agent_id</span><span class="kw">:</span> <span class="val">conversation.home_assistant</span>
+  <span class="key">tts</span><span class="kw">:</span> <span class="kw">true</span>
+  <span class="key">tts_voice</span><span class="kw">:</span> <span class="str">"it-IT-ElsaNeural"</span></code></pre>
 </section>
 
 <!-- ══ TEMI ══════════════════════════════════════════════════ -->
@@ -1655,10 +1682,11 @@ docker logs nova-domus --tail 100 -f  <span class="cm"># segui in tempo reale</s
       <thead><tr><th><span class="it">Campo</span><span class="en">Field</span></th><th><span class="it">Tipo</span><span class="en">Type</span></th><th><span class="it">Descrizione</span><span class="en">Description</span></th></tr></thead>
       <tbody>
         <tr><td>id</td><td>number</td><td class="it">Identificatore univoco obbligatorio (13 cifre)</td><td class="en">Mandatory unique identifier (13 digits)</td></tr>
-        <tr><td>name</td><td>string</td><td class="it">Titolo sezione. Ometti o usa <code>"-"</code> per separatore</td><td class="en">Section title. Omit or use <code>"-"</code> for separator</td></tr>
+        <tr><td>name</td><td>string</td><td class="it">Titolo sezione. Lascia vuoto per non mostrare il titolo</td><td class="en">Section title. Leave empty to hide the title</td></tr>
         <tr><td>type</td><td>string</td><td class="it">Ometti = normale; <code>horizontal-stack</code>; <code>vertical-stack</code></td><td class="en">Omit = normal; <code>horizontal-stack</code>; <code>vertical-stack</code></td></tr>
         <tr><td>items</td><td>Item[]</td><td class="it">Elementi della sezione (per sezioni normali)</td><td class="en">Section items (for normal sections)</td></tr>
         <tr><td>sections</td><td>Section[]</td><td class="it">Sezioni figlie (solo per horizontal/vertical-stack)</td><td class="en">Child sections (stacks only)</td></tr>
+        <tr><td>spacer</td><td>boolean</td><td class="it">Se <code>true</code>, mantiene la colonna anche quando la sezione è vuota (solo per sezioni figlie di uno stack) <span class="badge badge-new">Nuovo</span></td><td class="en">If <code>true</code>, keeps the column even when the section is empty (stack children only) <span class="badge badge-new">New</span></td></tr>
         <tr><td>visibility</td><td>CondGroup[]</td><td class="it">Condizioni visibilità della sezione</td><td class="en">Section visibility conditions</td></tr>
         <tr><td>item_visibility_template</td><td>CondGroup[]</td><td class="it">Template visibilità applicato a tutti gli item (usa <code>{item.entity_id}</code>)</td><td class="en">Visibility template applied to all items (uses <code>{item.entity_id}</code>)</td></tr>
       </tbody>
@@ -1784,6 +1812,7 @@ docker logs nova-domus --tail 100 -f  <span class="cm"># segui in tempo reale</s
         <tr><td>iframe</td><td><code>url</code>, <code>size</code> (CSS height)</td></tr>
         <tr><td>image</td><td><code>entity_id</code> oppure <code>url</code></td></tr>
         <tr><td>timer</td><td><code>entity_id</code> (timer.*)</td></tr>
+        <tr><td>binary_sensor <span class="badge badge-new">Nuovo</span></td><td><code>entity_id</code>, <code>name</code>, <code>on_value</code>, <code>off_value</code>, <code>icon_on</code>, <code>icon_off</code>, <code>color_on</code>, <code>color_off</code>, <code>prefix</code>, <code>suffix</code></td></tr>
         <tr><td>ai_assistant <span class="badge badge-new">Nuovo</span></td><td><code>agent_id</code> (req), <code>tts</code> (bool), <code>tts_auto</code> (bool), <code>tts_voice</code>, <code>wake_word</code> (bool)</td></tr>
       </tbody>
     </table>
