@@ -1,6 +1,6 @@
 {
     "name": "nova-domus",
-    "version": "v2026.5.3",
+    "version": "v2026.6.0",
     "private": true,
     "scripts": {
         "dev": "vite dev",
