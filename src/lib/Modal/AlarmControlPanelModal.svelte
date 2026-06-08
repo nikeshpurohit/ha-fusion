@@ -439,7 +439,7 @@
 		}
 	}
 
-	/* Tablet optimization (Galaxy Tab S7 Lite and similar) */
+	/* Tablet optimization (Galaxy Tab A7 Lite and similar) */
 	@media (max-width: 1024px) {
 		.buttons {
 			grid-template-columns: repeat(3, 1fr);

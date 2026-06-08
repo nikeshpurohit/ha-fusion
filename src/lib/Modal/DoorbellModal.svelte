@@ -202,7 +202,7 @@
 		opacity: 0.6;
 	}
 
-	/* Tablet portrait (Galaxy Tab S7 Lite and similar: 800x1280) */
+	/* Tablet portrait (Galaxy Tab A7 Lite and similar: 800x1280) */
 	@media (max-width: 1024px) {
 		.camera-wrap {
 			max-height: calc(80vh - 12rem);
