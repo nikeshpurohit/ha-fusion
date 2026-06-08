@@ -20,3 +20,4 @@ data/configuration.yaml
 # Claude Code (locale, non versionare)
 .claude/
 CLAUDE.md
+pnpm-workspace.yaml
