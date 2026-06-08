@@ -6,6 +6,7 @@
 	import { callService } from 'home-assistant-js-websocket';
 	import { getDomain } from '$lib/Utils';
 	import { onMount, onDestroy } from 'svelte';
+	import { closeModal } from 'svelte-modals';
 	import type { DoorbellItem } from '$lib/Types';
 
 	export let isOpen: boolean;
@@ -25,7 +26,7 @@
 			if (countdown === null) return;
 			countdown--;
 			if (countdown <= 0) {
-				isOpen = false;
+				closeModal();
 			}
 		}, 1000);
 	}
