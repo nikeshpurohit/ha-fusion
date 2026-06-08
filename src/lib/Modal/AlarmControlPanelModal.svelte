@@ -49,6 +49,7 @@
 	let reject = false;
 	let selectedService: string | undefined;
 	let timeout: ReturnType<typeof setTimeout> | undefined;
+	let wizardStep = 0; // 0: mode selection, 1: code input
 
 	function addCode(key: number) {
 		code += key;
@@ -56,6 +57,11 @@
 
 	function clearCode() {
 		code = '';
+	}
+
+	function goBackToModes() {
+		wizardStep = 0;
+		clearCode();
 	}
 
 	async function executeService(service: string) {
@@ -68,6 +74,7 @@
 
 			selectedService = undefined;
 			clearCode();
+			wizardStep = 0;
 		} catch (error: any) {
 			if (error.message === 'Invalid alarm code provided') {
 				reject = true;
@@ -80,8 +87,9 @@
 
 	async function handleAction(service: string) {
 		if (needsCode) {
-			// select mode and wait for code input
+			// select mode and proceed to keypad
 			selectedService = service;
+			wizardStep = 1;
 		} else {
 			// no code needed: execute immediately
 			await executeService(service);
@@ -138,106 +146,154 @@
 	<Modal>
 		<h1 slot="title">{getName(sel, entity)}</h1>
 
-		<h2>{$lang('state')}</h2>
+		<div class="wizard-container">
+			<!-- State indicator -->
+			<h2>{$lang('state')}</h2>
+			<span class:arming={state === 'arming'}>
+				<StateLogic entity_id={sel?.entity_id} selected={sel} />
+			</span>
 
-		<span class:arming={state === 'arming'}>
-			<StateLogic entity_id={sel?.entity_id} selected={sel} />
-		</span>
+			<!-- Wizard Step 0: Mode Selection -->
+			{#if wizardStep === 0}
+				<div class="wizard-step">
+					<h2>{$lang('alarm_modes_label')}</h2>
 
-		<!-- Mode buttons — always shown, filtered by supported_features -->
-		<h2>{$lang('alarm_modes_label')}</h2>
-
-		<div class="mode-buttons">
-			{#each modeOptions as option}
-				<button
-					class="mode-btn"
-					class:active={selectedService === option.id}
-					on:click={() => handleAction(option.id)}
-					use:Ripple={$ripple}
-				>
-					<Icon icon={option.icon} height="none" style="width: 1.4rem;" />
-					{option.label}
-				</button>
-			{/each}
-		</div>
-
-		<!-- Code input — only shown if code is required for this action -->
-		{#if needsCode && (selectedService || isArmed)}
-			<div class="container">
-				{#if showTextInput}
-					<input
-						type="text"
-						class:reject
-						bind:value={code}
-						placeholder={$lang('code')}
-						on:keydown={(e) => e.key === 'Enter' && enterCode()}
-					/>
-					<div class="text-confirm">
-						<button
-							on:click={clearCode}
-							use:Ripple={$ripple}
-							style:background-color={code === '' ? '' : '#422522'}
-							style:transition="background-color {$motion}ms ease"
-						>
-							<Icon
-								icon="gravity-ui:xmark"
-								height="none"
-								style={`width: 1.65rem; ${code === '' ? '' : `color: #e15241;`}`}
-							/>
-						</button>
-						<button on:click={enterCode} use:Ripple={$ripple} style:background-color="#293828">
-							<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;" />
-						</button>
-					</div>
-				{:else if showKeypad}
-					<input type="password" class:reject bind:value={code} />
-					<div class="buttons">
-						{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as digit}
-							<button on:click={() => addCode(digit)} use:Ripple={$ripple}>
-								{digit}
+					<div class="mode-buttons">
+						{#each modeOptions as option}
+							<button
+								class="mode-btn"
+								class:active={selectedService === option.id}
+								on:click={() => handleAction(option.id)}
+								use:Ripple={$ripple}
+							>
+								<Icon icon={option.icon} height="none" style="width: 1.4rem;" />
+								{option.label}
 							</button>
 						{/each}
+					</div>
+				</div>
+			{/if}
 
-						<button
-							on:click={clearCode}
-							use:Ripple={$ripple}
-							style:background-color={code === '' ? '' : '#422522'}
-							style:transition="background-color {$motion}ms ease"
-						>
-							<Icon
-								icon="gravity-ui:xmark"
-								height="none"
-								style={`width: 1.65rem; ${
-									code === '' ? '' : `color: #e15241; transition: background-color ${$motion}ms ease;`
-								}`}
+			<!-- Wizard Step 1: Code Input -->
+			{#if wizardStep === 1 && needsCode && selectedService}
+				<div class="wizard-step">
+					<h3 class="step-title">
+						{modeOptions.find((opt) => opt.id === selectedService)?.label}
+					</h3>
+
+					{#if showTextInput}
+						<div class="keypad-container">
+							<input
+								type="text"
+								class:reject
+								bind:value={code}
+								placeholder={$lang('code')}
+								on:keydown={(e) => e.key === 'Enter' && enterCode()}
+								autofocus
 							/>
-						</button>
+							<div class="text-confirm">
+								<button
+									on:click={clearCode}
+									use:Ripple={$ripple}
+									style:background-color={code === '' ? '' : '#422522'}
+									style:transition="background-color {$motion}ms ease"
+								>
+									<Icon
+										icon="gravity-ui:xmark"
+										height="none"
+										style={`width: 1.65rem; ${code === '' ? '' : `color: #e15241;`}`}
+									/>
+								</button>
+								<button on:click={enterCode} use:Ripple={$ripple} style:background-color="#293828">
+									<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;" />
+								</button>
+							</div>
+						</div>
+					{:else if showKeypad}
+						<div class="keypad-container">
+							<input type="password" class:reject bind:value={code} autofocus />
+							<div class="buttons">
+								{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as digit}
+									<button on:click={() => addCode(digit)} use:Ripple={$ripple}>
+										{digit}
+									</button>
+								{/each}
 
-						<button on:click={() => addCode(0)} use:Ripple={$ripple}>0</button>
+								<button
+									on:click={clearCode}
+									use:Ripple={$ripple}
+									style:background-color={code === '' ? '' : '#422522'}
+									style:transition="background-color {$motion}ms ease"
+								>
+									<Icon
+										icon="gravity-ui:xmark"
+										height="none"
+										style={`width: 1.65rem; ${
+											code === '' ? '' : `color: #e15241; transition: background-color ${$motion}ms ease;`
+										}`}
+									/>
+								</button>
 
-						<button on:click={enterCode} use:Ripple={$ripple} style:background-color="#293828">
-							<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;" />
+								<button on:click={() => addCode(0)} use:Ripple={$ripple}>0</button>
+
+								<button on:click={enterCode} use:Ripple={$ripple} style:background-color="#293828">
+									<Icon icon="gravity-ui:check" height="none" style="width: 1.8rem; color: #67ad5b;" />
+								</button>
+							</div>
+						</div>
+					{/if}
+
+					<!-- Wizard navigation -->
+					<div class="wizard-footer">
+						<button class="nav-btn" on:click={goBackToModes} use:Ripple={$ripple}>
+							<Icon icon="gravity-ui:chevron-left" height="none" style="width: 1.2rem;" />
+							{$lang('back')}
 						</button>
 					</div>
-				{/if}
-			</div>
-		{/if}
+				</div>
+			{/if}
+		</div>
 	</Modal>
 {/if}
 
 <style>
+	.wizard-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		height: 100%;
+	}
+
+	.wizard-step {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: 1rem;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.step-title {
+		margin: 0;
+		font-size: 1.1rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-align: center;
+	}
+
 	.mode-buttons {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		margin-bottom: 1.2rem;
+		margin-bottom: 0.5rem;
+		overflow-y: auto;
+		flex: 1;
 	}
 
 	.mode-btn {
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.65rem 1rem;
+		padding: 0.75rem 1rem;
 		background-color: var(--theme-button-background-color-off);
 		border-radius: 0.5rem;
 		border: 1px solid rgba(255, 255, 255, 0.1);
@@ -247,6 +303,7 @@
 		text-align: left;
 		width: 100%;
 		transition: background-color 150ms ease;
+		flex-shrink: 0;
 	}
 
 	.mode-btn.active {
@@ -254,43 +311,54 @@
 		background-color: rgba(255, 255, 255, 0.1);
 	}
 
-	.container {
-		display: grid;
+	.mode-btn:hover {
+		background-color: rgba(255, 255, 255, 0.05);
+	}
+
+	.keypad-container {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: 1rem;
+		justify-content: center;
+		align-items: center;
+		min-height: 0;
 	}
 
 	input[type='password'],
 	input[type='text'] {
 		text-align: center;
-		font-size: 3.2rem;
+		font-size: 2.5rem;
 		border: none;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 		color: white;
-		width: 20rem;
-		margin: 2rem auto;
+		max-width: 18rem;
+		width: 100%;
 		outline: none;
 		border-radius: 0.4rem 0.4rem 0 0;
 		background: var(--theme-button-background-color-off);
+		padding: 0.75rem 0;
+		letter-spacing: 0.5rem;
 	}
 
 	input[type='text'] {
 		font-size: 1.5rem;
-		padding: 0.5rem;
+		padding: 0.75rem 0.5rem;
+		letter-spacing: normal;
 	}
 
 	.buttons {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		column-gap: 2.2rem;
-		row-gap: 1.2rem;
-		margin: auto;
-		margin-bottom: 2.5rem;
+		column-gap: 1rem;
+		row-gap: 1rem;
+		margin: 0 auto;
 	}
 
 	.text-confirm {
 		display: flex;
 		justify-content: center;
 		gap: 1.5rem;
-		margin-bottom: 2rem;
 	}
 
 	button {
@@ -298,14 +366,36 @@
 		user-select: none;
 		background-color: var(--theme-button-background-color-off);
 		border-radius: 50%;
-		width: 4.5rem;
-		height: 4.5rem;
+		width: 3.5rem;
+		height: 3.5rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		font-size: 1.5rem;
+		font-size: 1.3rem;
 		color: white;
 		border: 1px solid rgba(255, 255, 255, 0.2);
+		transition: background-color 150ms ease;
+	}
+
+	button:hover {
+		background-color: rgba(255, 255, 255, 0.08);
+	}
+
+	.nav-btn {
+		width: auto;
+		border-radius: 0.4rem;
+		padding: 0.5rem 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.95rem;
+	}
+
+	.wizard-footer {
+		display: flex;
+		justify-content: flex-start;
+		padding-top: 0.5rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
 	.reject {
@@ -346,6 +436,60 @@
 		}
 		100% {
 			opacity: 1;
+		}
+	}
+
+	/* Tablet optimization (Galaxy Tab S7 Lite and similar) */
+	@media (max-width: 1024px) {
+		.buttons {
+			grid-template-columns: repeat(3, 1fr);
+			column-gap: 0.8rem;
+			row-gap: 0.8rem;
+		}
+
+		button {
+			width: 3.2rem;
+			height: 3.2rem;
+			font-size: 1.1rem;
+		}
+
+		input[type='password'],
+		input[type='text'] {
+			font-size: 2rem;
+		}
+
+		.mode-btn {
+			padding: 0.6rem 0.8rem;
+			font-size: 0.95rem;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.buttons {
+			grid-template-columns: repeat(3, 1fr);
+			column-gap: 0.6rem;
+			row-gap: 0.6rem;
+		}
+
+		button {
+			width: 2.8rem;
+			height: 2.8rem;
+			font-size: 0.95rem;
+		}
+
+		input[type='password'],
+		input[type='text'] {
+			font-size: 1.8rem;
+			max-width: 15rem;
+		}
+
+		.mode-btn {
+			padding: 0.5rem 0.7rem;
+			font-size: 0.9rem;
+		}
+
+		.text-confirm {
+			gap: 1rem;
 		}
 	}
 </style>
