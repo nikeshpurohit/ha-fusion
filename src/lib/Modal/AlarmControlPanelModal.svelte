@@ -107,8 +107,8 @@
 	});
 
 	// build options list filtered by supported_features
-	// disarm is always available
-	$: modeOptions = [
+	// separate arm modes from disarm
+	$: armModes = [
 		supports(FEATURES.ARM_HOME) && {
 			id: 'alarm_arm_home',
 			icon: 'mdi:home',
@@ -133,23 +133,34 @@
 			id: 'alarm_arm_custom_bypass',
 			icon: 'mdi:shield-half-full',
 			label: $lang('alarm_modes_armed_custom_bypass')
-		},
-		{
-			id: 'alarm_disarm',
-			icon: 'mdi:shield-off',
-			label: $lang('alarm_modes_disarmed')
 		}
 	].filter(Boolean) as { id: string; icon: string; label: string }[];
+
+	$: disarmMode = {
+		id: 'alarm_disarm',
+		icon: 'mdi:shield-off',
+		label: $lang('alarm_modes_disarmed')
+	};
+
+	$: modeOptions = [...armModes, disarmMode];
 </script>
 
 {#if isOpen}
 	<Modal>
-		<h1 slot="title">{getName(sel, entity)}</h1>
+		<svelte:fragment slot="title">
+			<div class="title-row">
+				{#if wizardStep === 1}
+					<button type="button" class="header-back" on:mousedown|preventDefault|stopPropagation={() => {wizardStep = 0; clearCode();}} on:click|preventDefault|stopPropagation aria-label="back">
+						<Icon icon="gravity-ui:chevron-left" height="none" style="width: 1.1rem;" />
+					</button>
+				{/if}
+				<span class="title-text">{getName(sel, entity)}</span>
+			</div>
+		</svelte:fragment>
 
 		<div class="wizard-container">
-			<!-- State indicator -->
-			<h2>{$lang('state')}</h2>
-			<span class:arming={state === 'arming'}>
+			<!-- State indicator (compact, heading removed) -->
+			<span class:arming={state === 'arming'} class="state-compact">
 				<StateLogic entity_id={sel?.entity_id} selected={sel} />
 			</span>
 
@@ -159,7 +170,7 @@
 					<h2>{$lang('alarm_modes_label')}</h2>
 
 					<div class="mode-buttons">
-						{#each modeOptions as option}
+						{#each armModes as option}
 							<button
 								class="mode-btn"
 								class:active={selectedService === option.id}
@@ -170,6 +181,20 @@
 								{option.label}
 							</button>
 						{/each}
+
+						{#if armModes.length > 0}
+							<div class="mode-divider" />
+						{/if}
+
+						<button
+							class="mode-btn disarm-btn"
+							class:active={selectedService === disarmMode.id}
+							on:click={() => handleAction(disarmMode.id)}
+							use:Ripple={$ripple}
+						>
+							<Icon icon={disarmMode.icon} height="none" style="width: 1.4rem;" />
+							{disarmMode.label}
+						</button>
 					</div>
 				</div>
 			{/if}
@@ -189,7 +214,7 @@
 								bind:value={code}
 								placeholder={$lang('code')}
 								on:keydown={(e) => e.key === 'Enter' && enterCode()}
-								autofocus
+								readonly
 							/>
 							<div class="text-confirm">
 								<button
@@ -211,7 +236,7 @@
 						</div>
 					{:else if showKeypad}
 						<div class="keypad-container">
-							<input type="password" class:reject bind:value={code} autofocus />
+							<input type="password" class:reject bind:value={code} readonly />
 							<div class="buttons">
 								{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as digit}
 									<button on:click={() => addCode(digit)} use:Ripple={$ripple}>
@@ -243,13 +268,6 @@
 						</div>
 					{/if}
 
-					<!-- Wizard navigation -->
-					<div class="wizard-footer">
-						<button class="nav-btn" on:click={goBackToModes} use:Ripple={$ripple}>
-							<Icon icon="gravity-ui:chevron-left" height="none" style="width: 1.2rem;" />
-							{$lang('back')}
-						</button>
-					</div>
 				</div>
 			{/if}
 		</div>
@@ -260,45 +278,95 @@
 	.wizard-container {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.5rem;
 		height: 100%;
+		padding: 0.35rem 0; 
+	}
+
+	.title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.header-back {
+		background: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		color: inherit;
+		padding: 0.35rem 0.35rem;
+		margin: 0;
+		border-radius: 0.35rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: background-color 150ms ease, border-color 150ms ease;
+		pointer-events: all;
+		z-index: 10;
+		flex-shrink: 0;
+	}
+
+	.header-back:hover {
+		background-color: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.25);
+	}
+
+	.title-text {
+		font-weight: 600;
+		font-size: 1rem;
+		line-height: 1;
+		flex: 1;
+	}
+
+	.state-compact {
+		display: flex;
+		justify-content: center;
+		font-size: 0.95rem;
+		opacity: 0.9;
+		margin: 0;
 	}
 
 	.wizard-step {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
-		gap: 1rem;
+		gap: 0.6rem;
 		min-height: 0;
 		overflow: hidden;
 	}
 
 	.step-title {
 		margin: 0;
-		font-size: 1.1rem;
-		color: rgba(255, 255, 255, 0.7);
+		font-size: 1.05rem;
+		color: rgba(255, 255, 255, 0.75);
 		text-align: center;
 	}
 
 	.mode-buttons {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
+		gap: 0.45rem;
+		margin-bottom: 0.4rem;
 		overflow-y: auto;
 		flex: 1;
+	}
+
+	.mode-divider {
+		height: 1px;
+		background-color: rgba(255, 255, 255, 0.1);
+		margin: 0.25rem 0;
 	}
 
 	.mode-btn {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		padding: 0.75rem 1rem;
+		gap: 0.6rem;
+		padding: 0.65rem 0.9rem;
 		background-color: var(--theme-button-background-color-off);
-		border-radius: 0.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 0.45rem;
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		color: white;
-		font-size: 1rem;
+		font-size: 0.98rem;
 		cursor: pointer;
 		text-align: left;
 		width: 100%;
@@ -306,20 +374,24 @@
 		flex-shrink: 0;
 	}
 
+	.mode-btn.disarm-btn {
+		opacity: 0.85;
+	}
+
 	.mode-btn.active {
-		border-color: rgba(255, 255, 255, 0.4);
-		background-color: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.35);
+		background-color: rgba(255, 255, 255, 0.06);
 	}
 
 	.mode-btn:hover {
-		background-color: rgba(255, 255, 255, 0.05);
+		background-color: rgba(255, 255, 255, 0.04);
 	}
 
 	.keypad-container {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
-		gap: 1rem;
+		gap: 0.9rem;
 		justify-content: center;
 		align-items: center;
 		min-height: 0;
@@ -328,37 +400,37 @@
 	input[type='password'],
 	input[type='text'] {
 		text-align: center;
-		font-size: 2.5rem;
+		font-size: 2.1rem;
 		border: none;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 		color: white;
 		max-width: 18rem;
 		width: 100%;
 		outline: none;
 		border-radius: 0.4rem 0.4rem 0 0;
 		background: var(--theme-button-background-color-off);
-		padding: 0.75rem 0;
-		letter-spacing: 0.5rem;
+		padding: 0.6rem 0;
+		letter-spacing: 0.45rem;
 	}
 
 	input[type='text'] {
-		font-size: 1.5rem;
-		padding: 0.75rem 0.5rem;
+		font-size: 1.45rem;
+		padding: 0.6rem 0.4rem;
 		letter-spacing: normal;
 	}
 
 	.buttons {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		column-gap: 1rem;
-		row-gap: 1rem;
+		column-gap: 0.9rem;
+		row-gap: 0.9rem;
 		margin: 0 auto;
 	}
 
 	.text-confirm {
 		display: flex;
 		justify-content: center;
-		gap: 1.5rem;
+		gap: 1.2rem;
 	}
 
 	button {
@@ -366,36 +438,19 @@
 		user-select: none;
 		background-color: var(--theme-button-background-color-off);
 		border-radius: 50%;
-		width: 3.5rem;
-		height: 3.5rem;
+		width: 3.2rem;
+		height: 3.2rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		font-size: 1.3rem;
+		font-size: 1.2rem;
 		color: white;
-		border: 1px solid rgba(255, 255, 255, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.16);
 		transition: background-color 150ms ease;
 	}
 
 	button:hover {
-		background-color: rgba(255, 255, 255, 0.08);
-	}
-
-	.nav-btn {
-		width: auto;
-		border-radius: 0.4rem;
-		padding: 0.5rem 1rem;
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.95rem;
-	}
-
-	.wizard-footer {
-		display: flex;
-		justify-content: flex-start;
-		padding-top: 0.5rem;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		background-color: rgba(255, 255, 255, 0.07);
 	}
 
 	.reject {
@@ -439,7 +494,6 @@
 		}
 	}
 
-	/* Tablet optimization (Galaxy Tab A7 Lite and similar) */
 	@media (max-width: 1024px) {
 		.buttons {
 			grid-template-columns: repeat(3, 1fr);
